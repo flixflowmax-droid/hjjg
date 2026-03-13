@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - LUXE FASHION</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        (function() {
+            const theme = localStorage.getItem('admin-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --brand-accent: #8b5cf6;
+            --hover-bg: rgba(51, 65, 85, 0.5);
+        }
+
+        [data-theme="light"] {
+            /* ... existing variables ... */
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --brand-accent: #7c3aed;
+            --hover-bg: rgba(226, 232, 240, 0.5);
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.3s ease, color 0.3s ease; }
+        .sidebar { transition: transform 0.3s ease, background-color 0.3s ease; background-color: var(--card-bg); border-color: var(--border-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transition: all 0.3s ease-in-out; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
+        
+        .btn-transition { transition: all 0.2s ease-in-out; }
+        .btn-transition:hover { transform: scale(1.02); }
+        .btn-transition:active { transform: scale(0.98); }
+
+        /* Theme-aware inputs and modals */
+        input:not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea {
+            background-color: var(--bg-color) !important;
+            color: var(--text-main) !important;
+            border-color: var(--border-color) !important;
+        }
+        input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .modal-card { background-color: var(--card-bg) !important; color: var(--text-main) !important; border-color: var(--border-color) !important; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--brand-accent); }
+
+        .dark-only { display: block; }
+        .light-only { display: none; }
+        [data-theme="light"] .dark-only { display: none; }
+        [data-theme="light"] .light-only { display: block; }
+
+        .glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background-color: rgba(var(--bg-color), 0.8); }
+        
+        /* Mobile table handling */
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+        /* Custom Modern Popups */
+        .luxe-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        .luxe-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .luxe-modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            transform: scale(0.9) translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .luxe-modal-overlay.active .luxe-modal-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        .luxe-modal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.75rem;
+        }
+        .luxe-modal-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-main); }
+        .luxe-modal-body { color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; font-size: 0.95rem; }
+        .luxe-modal-actions { display: flex; gap: 1rem; justify-content: center; }
+        .luxe-modal-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            min-width: 120px;
+        }
+        .luxe-modal-btn-primary { background: var(--brand-accent); color: white; border: none; }
+        .luxe-modal-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3); }
+        .luxe-modal-btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .luxe-modal-btn-secondary:hover { background: var(--hover-bg); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-sm">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-20 hidden md:hidden transition-opacity opacity-0"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar absolute md:relative w-64 border-r flex-shrink-0 flex flex-col h-full z-30 transform -translate-x-full md:translate-x-0 transition-all duration-300">
+        <div class="p-6 pb-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
+            <div class="flex items-center gap-3">
+                <img src="../user/assets/logo.png" alt="Logo" class="site-logo h-8 w-auto object-contain" id="sidebarLogoImg">
+                <h1 class="text-lg font-bold tracking-wider" id="sidebarBrandName" style="color: var(--text-main);">LUXE FASHION</h1>
+            </div>
+            <button id="sidebarCloseBtn" class="text-gray-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1" id="navMenu">
+            <button data-target="dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-brandAccent/10 text-brandAccent font-medium transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-chart-line w-5 text-center"></i> Dashboard
+            </button>
+            <button data-target="branding" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-darkBorder/50 hover:text-gray-200 transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-palette w-5 text-center"></i> Branding & UI
+            </button>
+            <button data-target="products" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-darkBorder/50 hover:text-gray-200 transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-shirt w-5 text-center"></i> Products
+            </button>
+            <button data-target="users" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-darkBorder/50 hover:text-gray-200 transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-users w-5 text-center"></i> Users
+            </button>
+            <button data-target="orders" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-darkBorder/50 hover:text-gray-200 transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-box-open w-5 text-center"></i> Orders
+            </button>
+            <button data-target="settings" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-darkBorder/50 hover:text-gray-200 transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-gear w-5 text-center"></i> Settings
+            </button>
+            <button data-target="cms" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-darkBorder/50 hover:text-gray-200 transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-layer-group w-5 text-center"></i> Content CMS
+            </button>
+            <button data-target="sections-cms" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-darkBorder/50 hover:text-gray-200 transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-object-group w-5 text-center"></i> Homepage Sections
+            </button>
+            <button data-target="shop-cms" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-darkBorder/50 hover:text-gray-200 transition-colors mb-1 nav-btn">
+                <i class="fa-solid fa-store w-5 text-center"></i> Shop Filters
+            </button>
+        </nav>
+
+        <div class="p-4 border-t flex flex-col gap-2" style="border-color: var(--border-color);">
+            <a href="../user/home.html" target="_blank" class="w-full flex items-center justify-center gap-2 py-2.5 text-brandAccent hover:text-white hover:bg-brandAccent rounded-lg transition-all border border-brandAccent/30 font-semibold text-xs">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Visit Store
+            </a>
+            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-xs font-bold">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden" style="background-color: var(--bg-color);">
+        
+        <!-- Header -->
+        <header class="h-16 flex items-center justify-between px-6 backdrop-blur border-b z-10" style="background-color: rgba(var(--bg-color), 0.8); border-color: var(--border-color);">
+            <div class="flex items-center gap-4">
+                <button id="sidebarOpenBtn" style="color: var(--text-muted);" class="hover:text-white transition-colors">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-xl font-semibold mt-1" id="topNavTitle" style="color: var(--text-main);">Dashboard Overview</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Theme Toggle -->
+                <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:rotate-12" style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+                    <i class="fa-solid fa-moon text-lg dark-only" style="color: #f1c40f;"></i>
+                    <i class="fa-solid fa-sun text-lg light-only" style="color: #f39c12;"></i>
+                </button>
+                <div class="relative group">
+                    <button id="notifBtn" class="text-gray-400 hover:text-white transition-colors relative">
+                        <i class="fa-regular fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brandAccent opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-brandAccent"></span></span>
+                    </button>
+                    <!-- Dropdown -->
+                    <div class="absolute right-0 mt-2 w-64 bg-darkCard border border-darkBorder rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <div class="p-3 border-b border-darkBorder text-xs font-semibold text-gray-400 uppercase tracking-widest">Notifications</div>
+                        <div class="p-4 text-sm text-gray-300 text-center py-6">
+                            No new notifications
+                        </div>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div id="profileBtn" class="cursor-pointer h-8 w-8 rounded-full bg-gradient-to-tr from-brandAccent to-purple-400 shadow-lg shadow-brandAccent/20 border-2 border-darkBg"></div>
+                    <!-- Dropdown -->
+                    <div class="absolute right-0 mt-2 w-48 bg-darkCard border border-darkBorder rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <div class="p-3 border-b border-darkBorder">
+                            <p class="text-white font-medium">Admin User</p>
+                            <p class="text-xs text-gray-500">admin@luxefashion.com</p>
+                        </div>
+                        <div class="p-2 flex flex-col">
+                            <button onclick="document.querySelector('[data-target=\'settings\']').click()" class="text-left px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-darkBorder/50 rounded-md transition-colors"><i class="fa-solid fa-gear w-5"></i> Settings</button>
+                            <button onclick="logout()" class="text-left px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-md transition-colors mt-1"><i class="fa-solid fa-right-from-bracket w-5"></i> Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-8" id="mainContent">
+            
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active space-y-8">
+                
+                <!-- Stat Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card p-6 relative overflow-hidden group">
+                        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium" style="color: var(--text-muted);">Total Products</p>
+                                <h3 class="text-3xl font-bold mt-2" id="dashProdCount">0</h3>
+                            </div>
+                            <div class="p-3 bg-blue-500/10 rounded-xl text-blue-500"><i class="fa-solid fa-box text-2xl"></i></div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-blue-500 font-medium">
+                            <i class="fa-solid fa-arrow-up mr-1"></i> Live from Inventory
+                        </div>
+                    </div>
+
+                    <div class="card p-6 relative overflow-hidden group">
+                        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-orange-500 to-yellow-400"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium" style="color: var(--text-muted);">Total Orders</p>
+                                <h3 class="text-3xl font-bold mt-2" id="dashOrderCount">0</h3>
+                            </div>
+                            <div class="p-3 bg-orange-500/10 rounded-xl text-orange-500"><i class="fa-solid fa-shopping-cart text-2xl"></i></div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-orange-500 font-medium">
+                            <i class="fa-solid fa-arrow-up mr-1"></i> Real-time Fulfillment
+                        </div>
+                    </div>
+
+                    <div class="card p-6 relative overflow-hidden group">
+                        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium" style="color: var(--text-muted);">Total Users</p>
+                                <h3 class="text-3xl font-bold mt-2" id="dashUserCount">0</h3>
+                            </div>
+                            <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-500"><i class="fa-solid fa-users text-2xl"></i></div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs text-emerald-500 font-medium">
+                            <i class="fa-solid fa-arrow-up mr-1"></i> Registered Customers
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4">
+                    <!-- New Orders Selection -->
+                    <div class="card p-6 flex flex-col">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="font-bold text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-receipt text-orange-500"></i> New Orders
+                            </h4>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-orange-500 bg-orange-500/10 px-2 py-1 rounded">Latest 10</span>
+                        </div>
+                        <div class="table-container flex-1">
+                            <table class="w-full text-left text-sm">
+                                <thead style="color: var(--text-muted);" class="border-b text-[10px] uppercase tracking-wider" style="border-color: var(--border-color);">
+                                    <tr>
+                                        <th class="pb-3">Order ID</th>
+                                        <th class="pb-3">Customer</th>
+                                        <th class="pb-3">Amount</th>
+                                        <th class="pb-3">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashOrdersBody" class="divide-y" style="border-color: var(--border-color);">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button onclick="document.querySelector('[data-target=\'orders\']').click()" class="mt-6 w-full py-3 rounded-lg border font-semibold text-sm btn-transition hover:bg-brandAccent hover:text-white hover:border-brandAccent" style="border-color: var(--border-color); color: var(--text-main);">
+                            View All Orders <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- New Users Selection -->
+                    <div class="card p-6 flex flex-col">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="font-bold text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-user-plus text-emerald-500"></i> New Users
+                            </h4>
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">Recently Joined</span>
+                        </div>
+                        <div class="table-container flex-1">
+                            <table class="w-full text-left text-sm">
+                                <thead style="color: var(--text-muted);" class="border-b text-[10px] uppercase tracking-wider" style="border-color: var(--border-color);">
+                                    <tr>
+                                        <th class="pb-3">Customer</th>
+                                        <th class="pb-3">Email/Phone</th>
+                                        <th class="pb-3">Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashUsersBody" class="divide-y" style="border-color: var(--border-color);">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button onclick="document.querySelector('[data-target=\'users\']').click()" class="mt-6 w-full py-3 rounded-lg border font-semibold text-sm btn-transition hover:bg-brandAccent hover:text-white hover:border-brandAccent" style="border-color: var(--border-color); color: var(--text-main);">
+                            View User Database <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Site State -->
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="card p-6">
+                        <h4 class="font-medium mb-4 border-b pb-3" style="border-color: var(--border-color); color: var(--text-muted);">Current Frontend State (Real-Time Sync)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm mt-4">
+                             <div class="p-4 rounded-xl" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted);" class="block mb-1 text-xs uppercase font-bold">Site Name</span>
+                                <span class="font-bold text-lg" id="stateSiteName">Loading...</span>
+                            </div>
+                            <div class="p-4 rounded-xl" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted);" class="block mb-2 text-xs uppercase font-bold">Active Hero Banner</span>
+                                <img src="" id="stateHeroImg" class="h-16 w-full object-cover rounded shadow-md border" style="border-color: var(--border-color);">
+                            </div>
+                            <div class="p-4 rounded-xl" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted);" class="block mb-2 text-xs uppercase font-bold">Footer Content Sample</span>
+                                <p class="text-xs italic leading-relaxed line-clamp-3" id="stateFooterText">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branding Tab -->
+            <div id="branding" class="tab-content space-y-8">
+                <div class="card p-8 max-w-3xl mx-auto md:mx-0">
+                    <div class="flex items-center gap-4 mb-8 border-b pb-4" style="border-color: var(--border-color);">
+                        <div class="p-3 bg-brandAccent/10 rounded-xl text-brandAccent">
+                            <i class="fa-solid fa-paint-roller text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Global Branding Manager</h3>
+                            <p style="color: var(--text-muted);" class="text-xs">Physical HTML synchronization & UI token updates.</p>
+                        </div>
+                    </div>
+                    
+                    <form id="brandingForm" class="grid grid-cols-1 md:grid-cols-2 gap-8" novalidate>
+                        <div class="md:col-span-2">
+                            <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Brand / Site Name</label>
+                            <input type="text" id="brandNameInput" name="site_name" class="w-full bg-transparent border rounded-xl px-4 py-4 focus:outline-none focus:border-brandAccent transition-all text-lg font-bold" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" placeholder="LUXE FASHION">
+                        </div>
+ 
+                        <div class="card p-4 flex flex-col items-center text-center group bg-opacity-50" style="background-color: var(--bg-color);">
+                            <label class="block font-bold mb-4 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Brand Logo</label>
+                            <div class="relative mb-4">
+                                <img id="previewLogo" class="w-24 h-24 object-contain rounded-2xl border bg-white p-2 shadow-inner" style="border-color: var(--border-color);" src="">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
+                                    <i class="fa-solid fa-camera text-white text-xl"></i>
+                                </div>
+                                <input type="file" id="logoImageInput" name="site_logo" accept="image/png, image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            </div>
+                            <p class="text-[10px]" style="color: var(--text-muted);">PNG or WEBP recommended</p>
+                        </div>
+
+                        <div class="card p-4 flex flex-col items-center text-center group bg-opacity-50" style="background-color: var(--bg-color);">
+                            <label class="block font-bold mb-4 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Hero Banner</label>
+                            <div class="relative mb-4 w-full">
+                                <img id="previewHero" class="w-full h-24 object-cover rounded-2xl border shadow-inner" style="border-color: var(--border-color);" src="">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
+                                    <i class="fa-solid fa-image text-white text-xl"></i>
+                                </div>
+                                <input type="file" id="heroImageInput" name="hero_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            </div>
+                            <p class="text-[10px]" style="color: var(--text-muted);">High quality JPG/WEBP</p>
+                        </div>
+
+                        <div class="md:col-span-2 space-y-4">
+                            <label class="block font-bold mb-4 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Premium Color Palette</label>
+                            <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 mb-6">
+                                <!-- LUXE Palettes -->
+                                <button type="button" onclick="setPresetColor('#D4AF37')" title="Midnight Gold" class="h-12 w-full rounded-xl border-2 border-transparent hover:border-white transition-all hover:scale-110 shadow-lg" style="background: #D4AF37;"></button>
+                                <button type="button" onclick="setPresetColor('#722F37')" title="Burgundy Wine" class="h-12 w-full rounded-xl border-2 border-transparent hover:border-white transition-all hover:scale-110 shadow-lg" style="background: #722F37;"></button>
+                                <button type="button" onclick="setPresetColor('#004B49')" title="Emerald Luxe" class="h-12 w-full rounded-xl border-2 border-transparent hover:border-white transition-all hover:scale-110 shadow-lg" style="background: #004B49;"></button>
+                                <button type="button" onclick="setPresetColor('#1B4F72')" title="Deep Ocean" class="h-12 w-full rounded-xl border-2 border-transparent hover:border-white transition-all hover:scale-110 shadow-lg" style="background: #1B4F72;"></button>
+                                <button type="button" onclick="setPresetColor('#FF0055')" title="Neon Passion" class="h-12 w-full rounded-xl border-2 border-transparent hover:border-white transition-all hover:scale-110 shadow-lg" style="background: #FF0055;"></button>
+                                <button type="button" onclick="setPresetColor('#8B5CF6')" title="Electric Violet" class="h-12 w-full rounded-xl border-2 border-transparent hover:border-white transition-all hover:scale-110 shadow-lg" style="background: #8B5CF6;"></button>
+                                <button type="button" onclick="setPresetColor('#111111')" title="True Black" class="h-12 w-full rounded-xl border-2 border-transparent hover:border-white transition-all hover:scale-110 shadow-lg" style="background: #111111;"></button>
+                                <button type="button" onclick="setPresetColor('#002366')" title="Royal Navy" class="h-12 w-full rounded-xl border-2 border-transparent hover:border-white transition-all hover:scale-110 shadow-lg" style="background: #002366;"></button>
+                            </div>
+
+                            <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Custom Accent Color</label>
+                            <div class="relative group">
+                                <input type="color" id="themeColorInput" name="theme_color" value="#8b5cf6" class="absolute inset-0 w-full h-12 opacity-0 cursor-pointer z-20">
+                                <div class="h-12 w-full rounded-xl border-2 border-dashed flex items-center justify-center gap-3 transition-colors group-hover:bg-white/5" style="border-color: var(--border-color);">
+                                    <div id="colorPreviewBox" class="w-6 h-6 rounded-full shadow-md transition-colors" style="background: #8b5cf6;"></div>
+                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Pick Custom Color</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="md:col-span-2 pt-4">
+                            <button type="submit" class="w-full bg-brandAccent hover:bg-brandAccent/90 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-brandAccent/30 flex items-center justify-center gap-3 active:scale-95">
+                                <i class="fa-solid fa-floppy-disk"></i> Synchronize All Platforms
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div id="products" class="tab-content space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-center card p-4 gap-4">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="p-3 bg-brandAccent/10 rounded-xl text-brandAccent">
+                            <i class="fa-solid fa-shirt text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold">Product Catalog</h3>
+                            <p style="color: var(--text-muted);" class="text-xs">Manage your storefront inventory.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-1 max-w-md w-full relative group">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2" style="color: var(--text-muted);"></i>
+                        <input type="text" id="prodSearch" placeholder="Search by name, ID or category..." class="w-full bg-transparent border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-brandAccent transition-all" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);">
+                    </div>
+                    <button id="addProdBtn" class="bg-brandAccent hover:bg-brandAccent/90 text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-brandAccent/20 text-xs whitespace-nowrap active:scale-95">
+                        <i class="fa-solid fa-plus-circle text-lg"></i> New Product
+                    </button>
+                </div>
+
+                <div class="card overflow-hidden">
+                    <div class="table-container">
+                        <table class="w-full text-left text-sm">
+                            <thead style="color: var(--text-muted); background-color: var(--bg-color);" class="border-b text-[10px] uppercase font-bold tracking-wider" style="border-color: var(--border-color);">
+                                <tr>
+                                    <th class="px-6 py-4">Product Info</th>
+                                    <th class="px-6 py-4">Category</th>
+                                    <th class="px-6 py-4">Price (৳)</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Visibility</th>
+                                    <th class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody" class="divide-y" style="border-color: var(--border-color);">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Product Modal Area -->
+            <div id="productModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-all duration-300">
+                <div class="card w-full max-w-2xl transform scale-95 transition-transform duration-300 p-8 max-h-[95vh] overflow-y-auto" id="prodModalContent">
+                    <div class="flex justify-between items-center mb-8">
+                        <div class="flex items-center gap-4">
+                            <div class="h-12 w-12 rounded-xl bg-brandAccent/10 text-brandAccent flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-plus-circle" id="prodModalIcon"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold" id="prodModalTitle">Product Details</h3>
+                        </div>
+                        <button class="text-gray-400 hover:text-white transition-colors" onclick="closeProductModal()"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                    </div>
+
+                    <form id="productForm" class="space-y-6" novalidate enctype="multipart/form-data">
+                        <input type="hidden" id="prodId" name="id">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Product Name</label>
+                                <input type="text" id="prodName" name="name" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all font-bold" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" required>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Store Category</label>
+                                <select id="prodCat" name="category" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all appearance-none" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" required>
+                                    <!-- Dynamic -->
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Feature Placement</label>
+                                <select id="prodFeat" name="feature" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all appearance-none" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);">
+                                    <option value="">No Special Feature</option>
+                                    <!-- Dynamic -->
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Sale Price (৳)</label>
+                                <input type="number" step="0.01" id="prodPrice" name="price" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all font-mono" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" required>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Strikethrough Price (৳)</label>
+                                <input type="number" step="0.01" id="prodOrigPrice" name="originalPrice" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all font-mono opacity-60" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);">
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl space-y-4" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
+                            <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Catalog Attributes</label>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <div class="relative flex items-center">
+                                        <input type="checkbox" id="prodIsNew" name="isNew" class="peer h-5 w-5 opacity-0 absolute">
+                                        <div class="h-5 w-5 border-2 rounded peer-checked:bg-blue-500 peer-checked:border-blue-500 transition-all flex items-center justify-center" style="border-color: var(--border-color);">
+                                            <i class="fa-solid fa-check text-[10px] text-white"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-medium group-hover:text-blue-500 transition-colors">NEW Arrival</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <div class="relative flex items-center">
+                                        <input type="checkbox" id="prodIsSale" name="isFlashSale" class="peer h-5 w-5 opacity-0 absolute">
+                                        <div class="h-5 w-5 border-2 rounded peer-checked:bg-orange-500 peer-checked:border-orange-500 transition-all flex items-center justify-center" style="border-color: var(--border-color);">
+                                            <i class="fa-solid fa-bolt text-[10px] text-white"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-medium group-hover:text-orange-500 transition-colors">Flash Sale</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <div class="relative flex items-center">
+                                        <input type="checkbox" id="prodIsSoldOut" name="isSoldOut" class="peer h-5 w-5 opacity-0 absolute">
+                                        <div class="h-5 w-5 border-2 rounded peer-checked:bg-red-500 peer-checked:border-red-500 transition-all flex items-center justify-center" style="border-color: var(--border-color);">
+                                            <i class="fa-solid fa-slash text-[10px] text-white"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-medium group-hover:text-red-500 transition-colors">Sold Out</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <div class="relative flex items-center">
+                                        <input type="checkbox" id="prodVisible" name="isVisible" class="peer h-5 w-5 opacity-0 absolute" checked>
+                                        <div class="h-5 w-5 border-2 rounded peer-checked:bg-green-500 peer-checked:border-green-500 transition-all flex items-center justify-center" style="border-color: var(--border-color);">
+                                            <i class="fa-solid fa-eye text-[10px] text-white"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-medium group-hover:text-green-500 transition-colors">Visible</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Homepage Sections (Dynamic) -->
+                        <div class="p-4 rounded-xl space-y-3" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
+                            <label class="block font-bold text-[10px] uppercase tracking-widest mb-1" style="color: var(--text-muted);">Homepage Section Mapping</label>
+                            <div id="productSectionsContainer" class="grid grid-cols-2 gap-3 pb-2">
+                                <!-- Dynamic -->
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Product Sizing Module -->
+                        <div class="p-4 rounded-xl space-y-4" style="background-color: var(--bg-color); border: 1px solid var(--border-color);">
+                            <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest flex justify-between" style="color: var(--text-muted);">
+                                Dynamic Product Sizing
+                                <span class="text-[9px] lowercase italic font-normal">Optional</span>
+                            </label>
+                            
+                            <div class="flex gap-4 text-xs font-semibold mb-3">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sizeOption" value="none" checked class="accent-brandAccent" onchange="toggleSizeOptions()"> None
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sizeOption" value="predefined" class="accent-brandAccent" onchange="toggleSizeOptions()"> Predefined
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sizeOption" value="manual" class="accent-brandAccent" onchange="toggleSizeOptions()"> Manual
+                                </label>
+                            </div>
+
+                            <!-- Predefined Badges -->
+                            <div id="predefinedSizes" class="hidden flex flex-wrap gap-2">
+                                <button type="button" class="size-badge w-10 h-10 rounded border border-gray-500 text-gray-400 hover:border-brandAccent transition-colors flex items-center justify-center font-bold text-sm" onclick="toggleSizeBadge(this)">S</button>
+                                <button type="button" class="size-badge w-10 h-10 rounded border border-gray-500 text-gray-400 hover:border-brandAccent transition-colors flex items-center justify-center font-bold text-sm" onclick="toggleSizeBadge(this)">M</button>
+                                <button type="button" class="size-badge w-10 h-10 rounded border border-gray-500 text-gray-400 hover:border-brandAccent transition-colors flex items-center justify-center font-bold text-sm" onclick="toggleSizeBadge(this)">L</button>
+                                <button type="button" class="size-badge w-10 h-10 rounded border border-gray-500 text-gray-400 hover:border-brandAccent transition-colors flex items-center justify-center font-bold text-sm" onclick="toggleSizeBadge(this)">XL</button>
+                                <button type="button" class="size-badge w-10 h-10 rounded border border-gray-500 text-gray-400 hover:border-brandAccent transition-colors flex items-center justify-center font-bold text-sm" onclick="toggleSizeBadge(this)">XXL</button>
+                                <button type="button" class="size-badge w-10 h-10 rounded border border-gray-500 text-gray-400 hover:border-brandAccent transition-colors flex items-center justify-center font-bold text-sm" onclick="toggleSizeBadge(this)">XXXL</button>
+                            </div>
+
+                            <!-- Manual Inputs -->
+                            <div id="manualSizes" class="hidden grid grid-cols-3 sm:grid-cols-6 gap-2">
+                                <input type="number" class="manual-size-input w-full bg-transparent border rounded px-2 py-2 text-center text-sm focus:border-brandAccent outline-none" style="border-color: var(--border-color); color: var(--text-main);" placeholder="E.g 38">
+                                <input type="number" class="manual-size-input w-full bg-transparent border rounded px-2 py-2 text-center text-sm focus:border-brandAccent outline-none" style="border-color: var(--border-color); color: var(--text-main);" placeholder="E.g 40">
+                                <input type="number" class="manual-size-input w-full bg-transparent border rounded px-2 py-2 text-center text-sm focus:border-brandAccent outline-none" style="border-color: var(--border-color); color: var(--text-main);" placeholder="E.g 42">
+                                <input type="number" class="manual-size-input w-full bg-transparent border rounded px-2 py-2 text-center text-sm focus:border-brandAccent outline-none" style="border-color: var(--border-color); color: var(--text-main);" placeholder="E.g 44">
+                                <input type="number" class="manual-size-input w-full bg-transparent border rounded px-2 py-2 text-center text-sm focus:border-brandAccent outline-none" style="border-color: var(--border-color); color: var(--text-main);" placeholder="E.g 46">
+                                <input type="number" class="manual-size-input w-full bg-transparent border rounded px-2 py-2 text-center text-sm focus:border-brandAccent outline-none" style="border-color: var(--border-color); color: var(--text-main);" placeholder="E.g 48">
+                            </div>
+                        </div>
+
+                        <div class="group relative">
+                             <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest flex justify-between" style="color: var(--text-muted);">
+                                Product Aesthetics (Gallery up to 10 images)
+                                <span class="text-[9px] lowercase italic font-normal">Auto-uploads to assets/</span>
+                             </label>
+                             <div class="border-2 border-dashed rounded-xl p-6 transition-all group-hover:border-brandAccent flex flex-col items-center justify-center gap-2 relative overflow-hidden" style="border-color: var(--border-color); background-color: var(--bg-color);">
+                                <i class="fa-solid fa-images text-3xl opacity-20 group-hover:opacity-100 group-hover:text-brandAccent transition-all"></i>
+                                <span class="text-xs font-bold text-center" style="color: var(--text-muted);">Add new images (Max 10)<br>Click or Drop</span>
+                                <input type="file" id="prodImage" name="images[]" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleNewImages(this)">
+                             </div>
+                             
+                             <!-- Scrollable Image Gallery -->
+                             <div class="mt-4 w-full overflow-x-auto whitespace-nowrap py-2 hidden custom-scrollbar" id="imagePreviewContainer" style="scroll-behavior: smooth;">
+                                <div class="flex gap-3 inline-flex" id="imagePreviewQueue">
+                                    <!-- Dynamic images will appear here -->
+                                </div>
+                             </div>
+                        </div>
+
+                        <div class="pt-6 border-t flex justify-end gap-3" style="border-color: var(--border-color);">
+                            <button type="button" onclick="closeProductModal()" class="px-8 py-3 rounded-xl font-bold transition-all text-xs" style="color: var(--text-muted);">Cancel</button>
+                            <button type="submit" class="bg-brandAccent hover:bg-brandAccent/90 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-brandAccent/20 transition-all active:scale-95 text-xs">Save Product Entry</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="users" class="tab-content space-y-6">
+                <div class="card p-6 relative overflow-hidden group">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h3 class="text-lg font-medium mb-1"><i class="fa-solid fa-users text-emerald-500 mr-2"></i> User Database</h3>
+                            <p style="color: var(--text-muted);" class="text-xs">Manage authenticated site users.</p>
+                        </div>
+                        <div class="flex flex-1 max-w-xs w-full relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2" style="color: var(--text-muted);"></i>
+                            <input type="text" id="userSearch" placeholder="Search users..." class="w-full bg-transparent border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500 transition-colors" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="w-full text-left text-sm">
+                            <thead style="color: var(--text-muted);" class="border-b text-[10px] uppercase tracking-wider" style="border-color: var(--border-color);">
+                                <tr>
+                                    <th class="px-6 py-3">ID</th>
+                                    <th class="px-6 py-3">Name</th>
+                                    <th class="px-6 py-3">Email</th>
+                                    <th class="px-6 py-3">Status</th>
+                                    <th class="px-6 py-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="divide-y" style="border-color: var(--border-color);"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Detail Modal -->
+            <div id="userDetailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-all duration-300">
+                <div class="card w-full max-w-2xl transform scale-95 transition-transform duration-300 p-8 max-h-[90vh] overflow-y-auto" style="background-color: var(--card-bg); color: var(--text-main);">
+                    <div class="flex justify-between items-center mb-8">
+                        <div class="flex items-center gap-4">
+                            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-emerald-500/20">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold" id="userDetailName">User Profile</h3>
+                                <p class="text-sm" style="color: var(--text-muted);" id="userDetailEmail">user@example.com</p>
+                            </div>
+                        </div>
+                        <button class="text-gray-400 hover:text-white transition-colors" onclick="closeUserDetailModal()"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="p-4 rounded-xl border" style="background-color: var(--bg-color); border-color: var(--border-color);">
+                            <span style="color: var(--text-muted);" class="text-[10px] uppercase font-bold tracking-widest block mb-2">Contact Information</span>
+                            <div class="space-y-3 text-sm">
+                                <p class="flex justify-between"><span style="color: var(--text-muted);">Phone:</span> <span class="font-medium" id="userDetailPhone">N/A</span></p>
+                                <p class="flex justify-between"><span style="color: var(--text-muted);">Joined:</span> <span class="font-medium" id="userDetailJoined">N/A</span></p>
+                                <p class="flex justify-between"><span style="color: var(--text-muted);">Status:</span> <span id="userDetailStatusBadge"></span></p>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl border" style="background-color: var(--bg-color); border-color: var(--border-color);">
+                            <span style="color: var(--text-muted);" class="text-[10px] uppercase font-bold tracking-widest block mb-2">Security</span>
+                            <div class="space-y-3 text-sm">
+                                <p class="flex justify-between items-center"><span style="color: var(--text-muted);">Password:</span> <span class="bg-red-500/10 text-red-400 px-2 py-0.5 rounded text-[10px] font-mono">ENCRYPTED</span></p>
+                                <button class="w-full mt-2 py-2 text-[10px] font-bold uppercase tracking-widest bg-red-500/10 text-red-500 rounded border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">Force Reset Password</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-brandAccent"></i> Order History</h4>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-brandAccent/10 text-brandAccent" id="userDetailOrderCount">0 Orders</span>
+                        </div>
+                        <div class="table-container border rounded-xl" style="border-color: var(--border-color);">
+                            <table class="w-full text-left text-sm">
+                                <thead style="color: var(--text-muted); background-color: var(--bg-color);" class="text-[10px] uppercase font-bold tracking-wider">
+                                    <tr>
+                                        <th class="px-4 py-3">Order ID</th>
+                                        <th class="px-4 py-3">Total</th>
+                                        <th class="px-4 py-3">Date</th>
+                                        <th class="px-4 py-3">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userDetailOrdersBody" class="divide-y" style="border-color: var(--border-color);">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="pt-8 mt-8 border-t flex justify-end" style="border-color: var(--border-color);">
+                        <button onclick="closeUserDetailModal()" class="bg-gray-500/10 hover:bg-gray-500/20 py-2 px-6 rounded-lg font-medium transition-all" style="color: var(--text-muted);">Close Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="orders" class="tab-content space-y-6">
+                <div class="bg-darkCard p-6 rounded-xl border border-darkBorder shadow-xl relative overflow-hidden group">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h3 class="text-lg font-medium mb-1"><i class="fa-solid fa-box text-orange-400 mr-2"></i> Order Fulfillment</h3>
+                            <p class="text-gray-400 text-xs">Manage orders status.</p>
+                        </div>
+                        <div class="flex flex-1 max-w-xs w-full relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input type="text" id="orderSearch" placeholder="Search orders..." class="w-full bg-darkBg border border-darkBorder rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-orange-400 transition-colors">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-300">
+                            <thead class="bg-darkBg border-b border-darkBorder text-gray-500 uppercase text-xs">
+                                <tr>
+                                    <th class="px-6 py-3">Order ID</th>
+                                    <th class="px-6 py-3">Customer Info</th>
+                                    <th class="px-6 py-3">Total (৳)</th>
+                                    <th class="px-6 py-3">Date</th>
+                                    <th class="px-6 py-3">Status</th>
+                                    <th class="px-6 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody" class="divide-y divide-darkBorder/50"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Details Modal -->
+            <div id="orderDetailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="bg-darkCard w-full max-w-4xl rounded-xl border border-darkBorder shadow-2xl transform scale-95 transition-transform duration-300 p-6 max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold" id="orderModalTitle">Order Details</h3>
+                        <button class="text-gray-400 hover:text-white" onclick="closeOrderModal()"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Customer Info -->
+                        <div class="bg-darkBg p-4 border border-darkBorder rounded-lg">
+                            <h4 class="text-brandAccent font-bold mb-3 uppercase tracking-wider text-xs border-b border-darkBorder pb-2">Customer Details</h4>
+                            <div class="space-y-2 text-sm text-gray-300" id="orderCustomerInfo">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="bg-darkBg p-4 border border-darkBorder rounded-lg">
+                            <h4 class="text-orange-400 font-bold mb-3 uppercase tracking-wider text-xs border-b border-darkBorder pb-2">Order Summary</h4>
+                            <div class="space-y-2 text-sm text-gray-300" id="orderSummaryInfo">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Table -->
+                    <div>
+                        <h4 class="text-blue-400 font-bold mb-3 uppercase tracking-wider text-xs flex items-center gap-2"><i class="fa-solid fa-box-open"></i> Purchased Items</h4>
+                        <div class="overflow-x-auto border border-darkBorder rounded-lg bg-darkBg">
+                            <table class="w-full text-left text-sm text-gray-300">
+                                <thead class="bg-darkBorder/50 text-gray-400 text-xs uppercase tracking-wider border-b border-darkBorder">
+                                    <tr>
+                                        <th class="px-4 py-3">Product Info</th>
+                                        <th class="px-4 py-3 text-center">Qty</th>
+                                        <th class="px-4 py-3 text-right">Price</th>
+                                        <th class="px-4 py-3 text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderItemsTableBody" class="divide-y divide-darkBorder">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- HTML Config -->
+                    <div class="card p-8">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="p-3 bg-blue-500/10 rounded-xl text-blue-500">
+                                <i class="fa-solid fa-code text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">HTML Core Config</h3>
+                                <p style="color: var(--text-muted);" class="text-xs">Direct DOM synchronized content.</p>
+                            </div>
+                        </div>
+                        
+                        <form id="settingsForm" class="space-y-6" novalidate>
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Support Email</label>
+                                <input type="email" id="setSupportEmail" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" placeholder="contact@luxefashion.com" required>
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Global Footer Text</label>
+                                <textarea id="setFooterText" rows="4" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all text-sm leading-relaxed" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" required></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-brandAccent hover:bg-brandAccent/90 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-brandAccent/30 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-screwdriver-wrench"></i> Update HTML Nodes
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Admin Auth -->
+                    <div class="card p-8">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="p-3 bg-red-500/10 rounded-xl text-red-500">
+                                <i class="fa-solid fa-user-shield text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Admin Security</h3>
+                                <p style="color: var(--text-muted);" class="text-xs">Manage administrative credentials.</p>
+                            </div>
+                        </div>
+                        
+                        <form id="adminAuthForm" class="space-y-6" novalidate>
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Admin Username</label>
+                                <input type="text" id="adminUsername" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-red-400 transition-all font-bold" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" required>
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">New Password (Optional)</label>
+                                <input type="password" id="adminPassword" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-red-400 transition-all" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" placeholder="Leave blank to keep current">
+                            </div>
+                            <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-red-500/30 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-lock"></i> Update Admin Access
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- SMTP -->
+                    <div class="card p-8 md:col-span-2 mx-auto w-full max-w-2xl">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-500">
+                                <i class="fa-solid fa-envelope text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">SMTP Notification Engine</h3>
+                                <p style="color: var(--text-muted);" class="text-xs">Email routing for contact forms and inquiries.</p>
+                            </div>
+                        </div>
+                        
+                        <form id="smtpSettingsForm" class="grid grid-cols-1 md:grid-cols-2 gap-6" novalidate>
+                            <div class="md:col-span-2">
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Sender (SMTP Login)</label>
+                                <input type="email" id="smtpSenderEmail" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" required>
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">SMTP Password</label>
+                                <input type="password" id="smtpPassword" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" required>
+                            </div>
+                            <div>
+                                <label class="block font-bold mb-2 text-[10px] uppercase tracking-widest" style="color: var(--text-muted);">Receiver Address</label>
+                                <input type="email" id="smtpReceiverEmail" class="w-full bg-transparent border rounded-xl px-4 py-3 focus:outline-none focus:border-brandAccent transition-all" style="border-color: var(--border-color); color: var(--text-main); background-color: var(--bg-color);" required>
+                            </div>
+                            <div class="md:col-span-2">
+                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i> Save SMTP Linkage
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content CMS Tab -->
+
+            <div id="cms" class="tab-content space-y-8">
+                <div class="card p-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 bg-brandAccent/10 rounded-xl text-brandAccent">
+                                <i class="fa-solid fa-list-check text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Global Content Manager</h3>
+                                <p style="color: var(--text-muted);" class="text-xs">Dynamic redirection and automated UI labels.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="openMenuModal()" class="bg-brandAccent hover:bg-brandAccent/90 text-white font-bold py-3 px-6 rounded-xl transition-all text-xs flex items-center gap-2 shadow-lg shadow-brandAccent/20">
+                                <i class="fa-solid fa-plus-circle text-lg"></i> Add Entry
+                            </button>
+                            <button onclick="openSocialModal()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-xl transition-all text-xs flex items-center gap-2 shadow-lg shadow-pink-500/20">
+                                <i class="fa-brands fa-instagram text-lg"></i> Social Media
+                            </button>
+                            <button onclick="openTextModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all text-xs flex items-center gap-2 shadow-lg shadow-blue-500/20">
+                                <i class="fa-solid fa-font text-lg"></i> Mapping
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Menus List -->
+                        <div class="space-y-4">
+                            <h4 class="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style="color: var(--text-muted);">
+                                <span class="w-2 h-2 bg-brandAccent rounded-full animate-pulse"></span> Navigation & Actions
+                            </h4>
+                            <div class="card overflow-hidden">
+                                <div class="table-container">
+                                    <table class="w-full text-left text-sm">
+                                        <thead style="color: var(--text-muted); background-color: var(--bg-color);" class="border-b text-[10px] uppercase font-bold tracking-wider" style="border-color: var(--border-color);">
+                                            <tr>
+                                                <th class="px-6 py-4">Title</th>
+                                                <th class="px-6 py-4">Target</th>
+                                                <th class="px-6 py-4">Visibility</th>
+                                                <th class="px-6 py-4 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cmsMenuTableBody" class="divide-y" style="border-color: var(--border-color);"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Texts List -->
+                        <div class="space-y-4">
+                            <h4 class="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style="color: var(--text-muted);">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span> Dynamic UI Mappings
+                            </h4>
+                            <div class="card overflow-hidden">
+                                <div class="table-container">
+                                    <table class="w-full text-left text-sm">
+                                        <thead style="color: var(--text-muted); background-color: var(--bg-color);" class="border-b text-[10px] uppercase font-bold tracking-wider" style="border-color: var(--border-color);">
+                                            <tr>
+                                                <th class="px-6 py-4">Context Key</th>
+                                                <th class="px-6 py-4">Value</th>
+                                                <th class="px-6 py-4">Visibility</th>
+                                                <th class="px-6 py-4 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cmsTextTableBody" class="divide-y" style="border-color: var(--border-color);"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Media List -->
+                        <div class="space-y-4 lg:col-span-2 mt-8">
+                            <h4 class="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2" style="color: var(--text-muted);">
+                                <span class="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></span> Social Media Presence
+                            </h4>
+                            <div class="card overflow-hidden">
+                                <div class="table-container">
+                                    <table class="w-full text-left text-sm">
+                                        <thead style="color: var(--text-muted); background-color: var(--bg-color);" class="border-b text-[10px] uppercase font-bold tracking-wider" style="border-color: var(--border-color);">
+                                            <tr>
+                                                <th class="px-6 py-4">Platform</th>
+                                                <th class="px-6 py-4">Icon</th>
+                                                <th class="px-6 py-4">Link URL</th>
+                                                <th class="px-6 py-4">Visibility</th>
+                                                <th class="px-6 py-4 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cmsSocialTableBody" class="divide-y" style="border-color: var(--border-color);"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                    </div>
+                </div>
+            </div>
+
+            <div id="sections-cms" class="tab-content space-y-8">
+                <div class="card p-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 bg-brandAccent/10 rounded-xl text-brandAccent">
+                                <i class="fa-solid fa-object-group text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Homepage Sections</h3>
+                                <p style="color: var(--text-muted);" class="text-xs">Dynamic display sliders on the index page.</p>
+                            </div>
+                        </div>
+                        <button id="addSectionBtn" onclick="openSectionModal()" class="bg-brandAccent hover:bg-brandAccent/90 text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-brandAccent/20 text-xs whitespace-nowrap active:scale-95">
+                            <i class="fa-solid fa-plus-circle text-lg"></i> Add New Section
+                        </button>
+                    </div>
+
+                    <div class="card overflow-hidden">
+                        <div class="table-container">
+                            <table class="w-full text-left text-sm">
+                                <thead style="color: var(--text-muted); background-color: var(--bg-color);" class="border-b text-[10px] uppercase font-bold tracking-wider" style="border-color: var(--border-color);">
+                                    <tr>
+                                        <th class="px-6 py-4">Structure Identifier</th>
+                                        <th class="px-6 py-4">Visibility</th>
+                                        <th class="px-6 py-4 text-right">Fulfillment</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sectionsTableBody" class="divide-y" style="border-color: var(--border-color);">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shop CMS Tab -->
+            <div id="shop-cms" class="tab-content space-y-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Shop Categories Manager -->
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-emerald-500/10 rounded-lg text-emerald-500">
+                                    <i class="fa-solid fa-tags"></i>
+                                </div>
+                                <h3 class="text-lg font-bold">Store Categories</h3>
+                            </div>
+                            <button onclick="openShopCatModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-all text-[10px] uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div class="card border-none shadow-none bg-opacity-30" style="background-color: var(--bg-color);">
+                            <div class="table-container">
+                                <table class="w-full text-left text-xs">
+                                    <thead style="color: var(--text-muted);" class="border-b text-[10px] uppercase font-bold tracking-wider" style="border-color: var(--border-color);">
+                                        <tr>
+                                            <th class="px-4 py-3">Label</th>
+                                            <th class="px-4 py-3">Value</th>
+                                            <th class="px-4 py-3">Visibility</th>
+                                            <th class="px-4 py-3 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shopCatTableBody" class="divide-y" style="border-color: var(--border-color);"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shop Sorting Manager -->
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-orange-500/10 rounded-lg text-orange-500">
+                                    <i class="fa-solid fa-sort"></i>
+                                </div>
+                                <h3 class="text-lg font-bold">Sorting Engines</h3>
+                            </div>
+                            <button onclick="openShopSortModal()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg transition-all text-[10px] uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div class="card border-none shadow-none bg-opacity-30" style="background-color: var(--bg-color);">
+                            <div class="table-container">
+                                <table class="w-full text-left text-xs">
+                                    <thead style="color: var(--text-muted);" class="border-b text-[10px] uppercase font-bold tracking-wider" style="border-color: var(--border-color);">
+                                        <tr>
+                                            <th class="px-4 py-3">Selection Label</th>
+                                            <th class="px-4 py-3">Key</th>
+                                            <th class="px-4 py-3">Visibility</th>
+                                            <th class="px-4 py-3 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shopSortTableBody" class="divide-y" style="border-color: var(--border-color);"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shop Features / Collections Manager -->
+                    <div class="card p-6 lg:col-span-2">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-yellow-500/10 rounded-lg text-yellow-500">
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <h3 class="text-lg font-bold">Catalog Groups & Collection Features</h3>
+                            </div>
+                            <button onclick="openShopFeatModal()" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded-lg transition-all text-[10px] uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Create New Group
+                            </button>
+                        </div>
+                        <div class="card border-none shadow-none bg-opacity-30" style="background-color: var(--bg-color);">
+                            <div class="table-container">
+                                <table class="w-full text-left text-xs">
+                                    <thead style="color: var(--text-muted);" class="border-b text-[10px] uppercase font-bold tracking-wider" style="border-color: var(--border-color);">
+                                        <tr>
+                                            <th class="px-6 py-4">Internal Designator</th>
+                                            <th class="px-6 py-4">Unique ID</th>
+                                            <th class="px-6 py-4">Visibility</th>
+                                            <th class="px-6 py-4 text-right">Synchronization</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shopFeatTableBody" class="divide-y" style="border-color: var(--border-color);"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>  </div>
+                </div>
+            </div>
+
+            <!-- CMS Modals -->
+            <!-- Menu Modal -->
+            <div id="cmsMenuModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="modal-card w-full max-w-lg rounded-xl border p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold">Add/Edit Menu</h3>
+                        <button class="text-gray-400 hover:text-white" onclick="closeMenuModal()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="cmsMenuForm" class="space-y-4" novalidate>
+                        <input type="hidden" id="cmsMenuId">
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Menu Title</label>
+                            <input type="text" id="cmsMenuTitle" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-brandAccent" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Location Context</label>
+                            <select id="cmsMenuLocation" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white">
+                                <option value="header">Header Navigation</option>
+                                <option value="footer_col_1">Footer: Shop Collections</option>
+                                <option value="footer_col_2">Footer: Customer Care</option>
+                                <option value="mobile_menu">Mobile Menu</option>
+                                <option value="bottom_links">Bottom Small Links</option>
+                                <option value="page_buttons">Custom Page Button</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-400 text-xs mb-1">Link Type</label>
+                                <select id="cmsMenuType" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white">
+                                    <option value="path">Local File Path</option>
+                                    <option value="url">External URL</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-xs mb-1">Target Link</label>
+                                <input type="text" id="cmsMenuTarget" placeholder="e.g. shop.html or https://..." class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-brandAccent" required>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 py-2">
+                            <input type="checkbox" id="cmsMenuVisible" class="h-4 w-4 bg-darkBg border-darkBorder rounded text-brandAccent focus:ring-brandAccent" checked>
+                            <label for="cmsMenuVisible" class="text-sm text-gray-300">Visible on Storefront</label>
+                        </div>
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" onclick="closeMenuModal()" class="px-4 py-2 text-gray-400 hover:text-white transition">Cancel</button>
+                            <button type="submit" class="bg-brandAccent hover:bg-purple-600 text-white px-4 py-2 rounded transition shadow">Save Menu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Text Modal -->
+            <div id="cmsTextModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="modal-card w-full max-w-lg rounded-xl border p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold">One-Click Text Edit</h3>
+                        <button class="text-gray-400 hover:text-white" onclick="closeTextModal()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="cmsTextForm" class="space-y-4" novalidate>
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Text Key (Identifier)</label>
+                            <input type="text" id="cmsTextKey" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. hero_title, footer_copyright" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Text Value</label>
+                            <textarea id="cmsTextValue" rows="6" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500" required></textarea>
+                            <p class="text-[10px] text-gray-500 mt-1">Accepts raw text or HTML (ex: <code>&lt;br&gt;</code>).</p>
+                        </div>
+                        <div class="flex items-center gap-3 py-2">
+                            <input type="checkbox" id="cmsTextVisible" class="h-4 w-4 bg-darkBg border-darkBorder rounded text-blue-600 focus:ring-blue-500" checked>
+                            <label for="cmsTextVisible" class="text-sm text-gray-300">Enabled</label>
+                        </div>
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" onclick="closeTextModal()" class="px-4 py-2 text-gray-400 hover:text-white transition">Cancel</button>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition shadow">Update Text Globally</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Shop Category Modal -->
+            <div id="shopCatModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="modal-card w-full max-w-lg rounded-xl border p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold" id="shopCatModalTitle">Add/Edit Category</h3>
+                        <button class="text-gray-400 hover:text-white" onclick="closeShopCatModal()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="shopCatForm" class="space-y-4" novalidate>
+                        <input type="hidden" id="shopCatId">
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Display Name (Visible to User)</label>
+                            <input type="text" id="shopCatName" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-green-400 placeholder:text-gray-600" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Internal Value (Matches product category property)</label>
+                            <input type="text" id="shopCatValue" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-green-400 placeholder:text-gray-600" required>
+                        </div>
+                        <div class="flex items-center gap-3 py-2">
+                            <input type="checkbox" id="shopCatVisible" class="h-4 w-4 bg-darkBg border-darkBorder rounded text-green-600 focus:ring-green-500" checked>
+                            <label for="shopCatVisible" class="text-sm text-gray-300">Visible</label>
+                        </div>
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded-lg transition-colors">
+                                Save Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Shop Sort Modal -->
+            <div id="shopSortModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="modal-card w-full max-w-lg rounded-xl border p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold" id="shopSortModalTitle">Add/Edit Sort Option</h3>
+                        <button class="text-gray-400 hover:text-white" onclick="closeShopSortModal()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="shopSortForm" class="space-y-4" novalidate>
+                        <input type="hidden" id="shopSortId">
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Display Label</label>
+                            <input type="text" id="shopSortName" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-orange-400 placeholder:text-gray-600" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Action Value (used in JS sorting logic)</label>
+                            <input type="text" id="shopSortValue" list="sortKeys" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-orange-400 placeholder:text-gray-600" required>
+                            <datalist id="sortKeys">
+                                <option value="featured">Featured</option>
+                                <option value="newest">Newest First</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                            </datalist>
+                        </div>
+                        <div class="flex items-center gap-3 py-2">
+                            <input type="checkbox" id="shopSortVisible" class="h-4 w-4 bg-darkBg border-darkBorder rounded text-orange-600 focus:ring-orange-500" checked>
+                            <label for="shopSortVisible" class="text-sm text-gray-300">Active</label>
+                        </div>
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 rounded-lg transition-colors">
+                                Save Sort Option
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Shop Feature Modal -->
+            <div id="shopFeatModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="modal-card w-full max-w-lg rounded-xl border p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold" id="shopFeatModalTitle">Add/Edit Feature</h3>
+                        <button class="text-gray-400 hover:text-white" onclick="closeShopFeatModal()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="shopFeatForm" class="space-y-4" novalidate>
+                        <input type="hidden" id="shopFeatId">
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Feature Name</label>
+                            <input type="text" id="shopFeatName" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-400 placeholder:text-gray-600" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Internal Value / Key</label>
+                            <input type="text" id="shopFeatValue" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-400 placeholder:text-gray-600" required>
+                        </div>
+                        <div class="flex items-center gap-3 py-2">
+                            <input type="checkbox" id="shopFeatVisible" class="h-4 w-4 bg-darkBg border-darkBorder rounded text-yellow-600 focus:ring-yellow-500" checked>
+                            <label for="shopFeatVisible" class="text-sm text-gray-300">Visible</label>
+                        </div>
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg transition-colors">
+                                Save Feature
+                            </button>
+                        </div>
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg transition-colors">
+                                Save Feature
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+                </div>
+            </div>
+
+            <!-- Homepage Section Modal -->
+            <div id="sectionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="modal-card w-full max-w-md rounded-xl border p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold" id="sectionModalTitle">Add/Edit Section</h3>
+                        <button class="text-gray-400 hover:text-white" onclick="closeSectionModal()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="sectionForm" class="space-y-4" novalidate>
+                        <input type="hidden" id="sectionId">
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Section Title</label>
+                            <input type="text" id="sectionName" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-brandAccent" required>
+                        </div>
+                        <div class="flex items-center gap-3 py-2">
+                            <input type="checkbox" id="sectionVisible" class="h-4 w-4 bg-darkBg border-darkBorder rounded text-brandAccent focus:ring-brandAccent" checked>
+                            <label for="sectionVisible" class="text-sm text-gray-300">Visible</label>
+                        </div>
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" onclick="closeSectionModal()" class="px-4 py-2 text-gray-400 hover:text-white transition">Cancel</button>
+                            <button type="submit" class="bg-brandAccent hover:bg-purple-600 text-white px-4 py-2 rounded transition shadow">Save Section</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Social Media Modal -->
+            <div id="cmsSocialModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+                <div class="modal-card w-full max-w-lg rounded-xl border p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold" id="socialModalTitle">Social Media Entry</h3>
+                        <button class="text-gray-400 hover:text-white" onclick="closeSocialModal()"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="cmsSocialForm" class="space-y-4" novalidate>
+                        <input type="hidden" id="cmsSocialId">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-400 text-xs mb-1">Platform Name</label>
+                                <input type="text" id="cmsSocialName" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-pink-500" placeholder="e.g. Instagram" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-xs mb-1">FontAwesome Icon</label>
+                                <input type="text" id="cmsSocialIcon" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-pink-500" placeholder="e.g. fa-brands fa-instagram" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1">Direct URL</label>
+                            <input type="url" id="cmsSocialUrl" class="w-full bg-darkBg border border-darkBorder rounded px-3 py-2 text-white focus:outline-none focus:border-pink-500" placeholder="https://instagram.com/yourprofile" required>
+                        </div>
+                        <div class="flex items-center gap-3 py-2">
+                            <input type="checkbox" id="cmsSocialVisible" class="h-4 w-4 bg-darkBg border-darkBorder rounded text-pink-600 focus:ring-pink-500" checked>
+                            <label for="cmsSocialVisible" class="text-sm text-gray-300">Visible on Frontend</label>
+                        </div>
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" onclick="closeSocialModal()" class="px-4 py-2 text-gray-400 hover:text-white transition">Cancel</button>
+                            <button type="submit" class="bg-pink-600 hover:bg-pink-500 text-white px-6 py-2 rounded transition shadow font-bold">Save Social Link</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Custom Premium Modal Overlay -->
+    <div id="luxeModalOverlay" class="luxe-modal-overlay">
+        <div class="luxe-modal-card">
+            <div id="luxeModalIcon" class="luxe-modal-icon"></div>
+            <h3 id="luxeModalTitle" class="luxe-modal-title"></h3>
+            <p id="luxeModalBody" class="luxe-modal-body"></p>
+            <div id="luxeModalActions" class="luxe-modal-actions"></div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

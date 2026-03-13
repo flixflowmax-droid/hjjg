@@ -1,0 +1,147 @@
+<!-- header_ui.html (Snippet to replace the <header> in your HTML pages) -->
+
+<!-- Glass-morphism Sticky Header -->
+<header id="main-header" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 glass shadow-sm border-b border-white/20 text-black group">
+    <div class="container mx-auto px-6 lg:px-12 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="home.html" class="flex items-center gap-2 text-2xl font-bold tracking-tighter">
+            <img src="assets/logo.png" alt="Logo" class="site-logo h-6 w-auto object-contain">
+            <span class="hover:text-[--primary-color] transition-colors">LUXE FASHION</span>
+        </a>
+
+        <!-- Navigation Links (Desktop) -->
+        <nav id="cms-header-nav" class="hidden md:flex gap-8 text-sm font-medium tracking-wide">
+            <a href="shop.html" class="hover:text-[--primary-color] transition">Shop</a>
+            <a href="shop.html?category=new" class="hover:text-[--primary-color] transition">New Arrivals</a>
+            <a href="shop.html?category=collections" class="hover:text-[--primary-color] transition">Collections</a>
+            <a href="shop.html?sale=true" class="text-[--primary-color] hover:text-primary-hover transition relative">
+                Sale <span class="absolute -top-2 -right-3 w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
+            </a>
+        </nav>
+
+        <!-- Search, User, Cart & Hamburger -->
+        <div class="flex items-center gap-6 relative">
+            <a href="login.html" id="user-icon-link" class="hover:text-[--primary-color] transition relative" title="Account">
+                <i class="fa-regular fa-user text-xl"></i>
+                <div id="user-dropdown" class="absolute top-8 right-0 bg-white shadow-xl rounded-lg py-2 w-40 hidden flex-col border border-gray-100 opacity-0 transition-opacity">
+                    <!-- Nav items populated via JS based on session -->
+                </div>
+            </a>
+            
+            <a href="#" id="cart-toggle" class="cart-toggle relative hover:text-[--primary-color] transition" title="Bag">
+                <i class="fa-solid fa-bag-shopping text-xl"></i>
+                <span id="cart-count-badge" class="cart-badge absolute -top-2 -right-2 bg-[--primary-color] text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+            </a>
+            
+            <!-- Mobile Hamburger Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden hover:text-[--primary-color] transition relative z-50 flex flex-col gap-1.5 justify-center items-center w-6 h-6">
+                <span class="bg-black block transition-all duration-300 w-full h-0.5 rounded-sm origin-left"></span>
+                <span class="bg-black block transition-all duration-300 w-full h-0.5 rounded-sm"></span>
+                <span class="bg-black block transition-all duration-300 w-full h-0.5 rounded-sm origin-left"></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Mobile Overlay Menu -->
+<div id="mobile-menu" class="fixed inset-0 bg-white/95 backdrop-blur-xl z-40 transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center space-y-8">
+    <nav class="flex flex-col items-center space-y-8">
+        <a href="shop.html" class="text-2xl font-black tracking-tight hover:text-[--primary-color] transition">Shop Collection</a>
+        <a href="shop.html?category=new" class="text-2xl font-black tracking-tight hover:text-[--primary-color] transition">New Arrivals</a>
+        <a href="shop.html?sale=true" class="text-2xl font-black tracking-tight text-[--primary-color]">Flash Sale</a>
+        <div class="h-px bg-gray-200 w-1/3 my-4"></div>
+        <a href="login.html" id="mobile-auth-link" class="text-lg font-bold hover:text-[--primary-color] transition"><i class="fa-regular fa-user mr-2"></i>Sign In / Register</a>
+    </nav>
+</div>
+
+<script>
+    // Frontend JS logic for Header & Auth state check
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Mobile Hamburger Logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const spans = mobileMenuBtn.querySelectorAll('span');
+        
+        let menuOpen = false;
+
+        mobileMenuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                mobileMenu.classList.remove('translate-x-full');
+                // Animate hamburger to X
+                spans[0].style.transform = 'rotate(45deg)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg)';
+            } else {
+                mobileMenu.classList.add('translate-x-full');
+                // Revert X to hamburger
+                spans[0].style.transform = 'rotate(0)';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'rotate(0)';
+            }
+        });
+
+        // 2. Initial Auth Check (replaces localStorage session logic)
+        async function checkSession() {
+            try {
+                const response = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_session' })
+                });
+                
+                const result = await response.json();
+                
+                const userDropdown = document.getElementById('user-dropdown');
+                const userIconLink = document.getElementById('user-icon-link');
+                const mobileAuthLink = document.getElementById('mobile-auth-link');
+
+                if (result.success) {
+                    // User is logged in
+                    userIconLink.href = 'javascript:void(0);'; // Prevent navigation, show dropdown instead
+                    
+                    userDropdown.innerHTML = `
+                        <div class="px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-bold uppercase truncate">${result.user.name}</div>
+                        <a href="dashboard.php" class="block px-4 py-2 text-sm hover:bg-gray-50 hover:text-[--primary-color] transition"><i class="fa-solid fa-gauge mr-2"></i> Dashboard</a>
+                        <button id="logout-btn-header" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition"><i class="fa-solid fa-right-from-bracket mr-2"></i> Logout</button>
+                    `;
+
+                    // Handle Dropdown hover/click
+                    userIconLink.addEventListener('mouseenter', () => {
+                        userDropdown.classList.remove('hidden');
+                        setTimeout(() => userDropdown.classList.remove('opacity-0'), 10);
+                    });
+                    userIconLink.addEventListener('mouseleave', () => {
+                        userDropdown.classList.add('opacity-0');
+                        setTimeout(() => userDropdown.classList.add('hidden'), 300);
+                    });
+
+                    // Update Mobile Menu Auth link
+                    if(mobileAuthLink) {
+                        mobileAuthLink.innerHTML = `<i class="fa-solid fa-gauge mr-2"></i>Dashboard`;
+                        mobileAuthLink.href = 'dashboard.php';
+                    }
+
+                    // Logout Action
+                    document.getElementById('logout-btn-header')?.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        await fetch('api/auth.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'logout' })
+                        });
+                        window.location.reload();
+                    });
+
+                } else {
+                    // Not logged in
+                    userIconLink.href = 'login.html';
+                }
+            } catch (error) {
+                console.error("Session check failed:", error);
+            }
+        }
+
+        checkSession();
+    });
+</script>

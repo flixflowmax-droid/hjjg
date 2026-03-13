@@ -1,0 +1,418 @@
+{
+    "menus": [
+        {
+            "id": "m1",
+            "menu_title": "Women's New Arrivals",
+            "menu_location": "footer_col_1",
+            "link_type": "path",
+            "link_target": "shop.html?category=new"
+        },
+        {
+            "id": "m2",
+            "menu_title": "Men's Essentials",
+            "menu_location": "footer_col_1",
+            "link_type": "path",
+            "link_target": "shop.html?category=men"
+        },
+        {
+            "id": "m3",
+            "menu_title": "Luxury Accessories",
+            "menu_location": "footer_col_1",
+            "link_type": "path",
+            "link_target": "shop.html?category=accessories"
+        },
+        {
+            "id": "m4",
+            "menu_title": "Runway Collection",
+            "menu_location": "footer_col_1",
+            "link_type": "path",
+            "link_target": "shop.html?category=collections"
+        },
+        {
+            "id": "m5",
+            "menu_title": "Limited Edition Drops",
+            "menu_location": "footer_col_1",
+            "link_type": "path",
+            "link_target": "shop.html?sale=true"
+        },
+        {
+            "id": "m6",
+            "menu_title": "Contact Us",
+            "menu_location": "footer_col_2",
+            "link_type": "path",
+            "link_target": "contact.html"
+        },
+        {
+            "id": "m7",
+            "menu_title": "FAQ",
+            "menu_location": "footer_col_2",
+            "link_type": "path",
+            "link_target": "faq.html"
+        },
+        {
+            "id": "m8",
+            "menu_title": "Returns & Exchanges",
+            "menu_location": "footer_col_2",
+            "link_type": "path",
+            "link_target": "returns.html"
+        },
+        {
+            "id": "m9",
+            "menu_title": "About Us",
+            "menu_location": "footer_col_2",
+            "link_type": "path",
+            "link_target": "about.html"
+        },
+        {
+            "id": "m10",
+            "menu_title": "Order Tracking",
+            "menu_location": "footer_col_2",
+            "link_type": "path",
+            "link_target": "dashboard.html"
+        },
+        {
+            "id": "m11",
+            "menu_title": "Homepage",
+            "menu_location": "bottom_links",
+            "link_type": "path",
+            "link_target": "home.html"
+        },
+        {
+            "id": "m12",
+            "menu_title": "Privacy Policy",
+            "menu_location": "bottom_links",
+            "link_type": "path",
+            "link_target": "privacy.html"
+        },
+        {
+            "id": "m13",
+            "menu_title": "Terms & Conditions",
+            "menu_location": "bottom_links",
+            "link_type": "path",
+            "link_target": "terms.html"
+        },
+        {
+            "id": "mh1",
+            "menu_title": "New Arrivals",
+            "menu_location": "header",
+            "link_type": "path",
+            "link_target": "shop.html?category=new"
+        },
+        {
+            "id": "mh2",
+            "menu_title": "Women",
+            "menu_location": "header",
+            "link_type": "path",
+            "link_target": "shop.html?category=women"
+        },
+        {
+            "id": "mh3",
+            "menu_title": "Men",
+            "menu_location": "header",
+            "link_type": "path",
+            "link_target": "shop.html?category=men"
+        },
+        {
+            "id": "mh4",
+            "menu_title": "Flash Sale",
+            "menu_location": "header",
+            "link_type": "path",
+            "link_target": "shop.html?category=sale"
+        },
+        {
+            "id": "mob1",
+            "menu_title": "Home",
+            "menu_location": "mobile_menu",
+            "link_type": "path",
+            "link_target": "home.html"
+        },
+        {
+            "id": "mob2",
+            "menu_title": "Shop",
+            "menu_location": "mobile_menu",
+            "link_type": "path",
+            "link_target": "shop.html"
+        },
+        {
+            "id": "mob3",
+            "menu_title": "New Arrivals",
+            "menu_location": "mobile_menu",
+            "link_type": "path",
+            "link_target": "shop.html?category=new"
+        },
+        {
+            "id": "mob4",
+            "menu_title": "Flash Sale",
+            "menu_location": "mobile_menu",
+            "link_type": "path",
+            "link_target": "shop.html?category=sale"
+        },
+        {
+            "id": "btn_hero_btn_1",
+            "menu_title": "Shop Collection",
+            "menu_location": "data-attr-hero_btn_1",
+            "link_type": "path",
+            "link_target": "shop.html"
+        },
+        {
+            "id": "btn_hero_btn_2",
+            "menu_title": "Watch Runway",
+            "menu_location": "data-attr-hero_btn_2",
+            "link_type": "path",
+            "link_target": "#"
+        },
+        {
+            "id": "btn_curated_view_all",
+            "menu_title": "View All",
+            "menu_location": "data-attr-curated_view_all",
+            "link_type": "path",
+            "link_target": "shop.html"
+        },
+        {
+            "id": "btn_cat1_btn",
+            "menu_title": "Shop Now",
+            "menu_location": "data-attr-cat1_btn",
+            "link_type": "path",
+            "link_target": "shop.html?category=women"
+        },
+        {
+            "id": "btn_cat2_btn",
+            "menu_title": "Shop Now",
+            "menu_location": "data-attr-cat2_btn",
+            "link_type": "path",
+            "link_target": "shop.html?category=men"
+        },
+        {
+            "id": "btn_cat3_btn",
+            "menu_title": "Shop Now",
+            "menu_location": "data-attr-cat3_btn",
+            "link_type": "path",
+            "link_target": "shop.html?category=accessories"
+        },
+        {
+            "id": "btn_flash_btn",
+            "menu_title": "Claim Offer",
+            "menu_location": "data-attr-flash_btn",
+            "link_type": "path",
+            "link_target": "shop.html?sale=true"
+        },
+        {
+            "id": "69ad56d469401",
+            "menu_title": "Login \/ Sing Up",
+            "menu_location": "mobile_menu",
+            "link_type": "path",
+            "link_target": "login.html",
+            "visible": true
+        }
+    ],
+    "texts": [
+        {
+            "text_key": "hero_title",
+            "text_value": "THE NEW<br>STANDARD."
+        },
+        {
+            "text_key": "footer_about",
+            "text_value": "Redefining modern luxury through sustainable practices and timeless craftsmanship. Join our journey into the future of fashion."
+        },
+        {
+            "text_key": "footer_col_1_title",
+            "text_value": "Shop Collections"
+        },
+        {
+            "text_key": "footer_col_2_title",
+            "text_value": "Customer Care"
+        },
+        {
+            "text_key": "footer_seo_title",
+            "text_value": "Premium Fashion Destination"
+        },
+        {
+            "text_key": "footer_seo_text",
+            "text_value": "Luxe Fashion is the leading premium fashion retailer, curating global top designers. We specialize in contemporary luxury, avant-garde pieces, structured blazers, high-performance tailoring, and artisanal leather accessories. Our platform offers an immersive shopping experience featuring the latest autumn\/winter trends..."
+        },
+        {
+            "text_key": "footer_copyright",
+            "text_value": "&copy; 2024 LUXE Fashion Global Inc. All rights reserved."
+        },
+        {
+            "text_key": "hero_subtitle",
+            "text_value": "Winter 2024 Premiere"
+        },
+        {
+            "text_key": "hero_desc",
+            "text_value": "Discover the artisanal craftsmanship and avant-garde aesthetics of our latest collection. Limited pieces now available."
+        },
+        {
+            "text_key": "curated_title",
+            "text_value": "Curated Shop"
+        },
+        {
+            "text_key": "curated_desc",
+            "text_value": "Explore our most sought-after categories"
+        },
+        {
+            "text_key": "cat1_title",
+            "text_value": "Essential Women"
+        },
+        {
+            "text_key": "cat1_desc",
+            "text_value": "Elevated basics for every day"
+        },
+        {
+            "text_key": "cat2_title",
+            "text_value": "The Modern Man"
+        },
+        {
+            "text_key": "cat2_desc",
+            "text_value": "Tailored to perfection"
+        },
+        {
+            "text_key": "cat3_title",
+            "text_value": "Statement Accents"
+        },
+        {
+            "text_key": "arrivals_title",
+            "text_value": "New Arrivals"
+        },
+        {
+            "text_key": "shop_category_title",
+            "text_value": "Category"
+        },
+        {
+            "text_key": "sort_featured",
+            "text_value": "Featured"
+        },
+        {
+            "text_key": "sort_newest",
+            "text_value": "Newest First"
+        },
+        {
+            "text_key": "sort_price_low",
+            "text_value": "Price: Low to High"
+        },
+        {
+            "text_key": "sort_price_high",
+            "text_value": "Price: High to Low"
+        },
+        {
+            "text_key": "header_search_placeholder",
+            "text_value": "Search trends..."
+        },
+        {
+            "text_key": "header_cart_title",
+            "text_value": "Bag"
+        },
+        {
+            "text_key": "shop_filter_title",
+            "text_value": "Filters"
+        },
+        {
+            "text_key": "shop_clear_all",
+            "text_value": "Clear All"
+        },
+        {
+            "text_key": "shop_main_title",
+            "text_value": "The Complete Collection"
+        },
+        {
+            "text_key": "shop_products_label",
+            "text_value": "Products"
+        }
+    ],
+    "shop_categories": [
+        {
+            "id": "cat1",
+            "name": "Dresses",
+            "value": "Dresses"
+        },
+        {
+            "id": "cat2",
+            "name": "Outerwear",
+            "value": "Outerwear"
+        },
+        {
+            "id": "cat3",
+            "name": "Knitwear",
+            "value": "Knitwear"
+        },
+        {
+            "id": "cat4",
+            "name": "Accessories",
+            "value": "Accessories"
+        }
+    ],
+    "shop_sort_options": [
+        {
+            "id": "sort1",
+            "name": "Featured",
+            "value": "featured"
+        },
+        {
+            "id": "sort2",
+            "name": "Newest First",
+            "value": "newest"
+        },
+        {
+            "id": "sort3",
+            "name": "Price: Low to High",
+            "value": "price-low"
+        },
+        {
+            "id": "sort4",
+            "name": "Price: High to Low",
+            "value": "price-high"
+        }
+    ],
+    "shop_features": [
+        {
+            "id": "feat1",
+            "name": "Editor's Choice",
+            "value": "featured"
+        },
+        {
+            "id": "feat2",
+            "name": "Best Seller",
+            "value": "bestseller"
+        },
+        {
+            "id": "feat3",
+            "name": "Limited Edition",
+            "value": "limited"
+        },
+        {
+            "id": "feat4",
+            "name": "Curated Shop",
+            "value": "curated"
+        }
+    ],
+    "social_media": [
+        {
+            "id": "s1",
+            "name": "Instagram",
+            "url": "https:\/\/instagram.com",
+            "icon": "fa-brands fa-instagram",
+            "visible": false
+        },
+        {
+            "id": "s2",
+            "name": "Twitter",
+            "url": "https:\/\/twitter.com",
+            "icon": "fa-brands fa-twitter",
+            "visible": true
+        },
+        {
+            "id": "s3",
+            "name": "TikTok",
+            "url": "https:\/\/tiktok.com",
+            "icon": "fa-brands fa-tiktok",
+            "visible": true
+        },
+        {
+            "id": "s69b13ec0c5820",
+            "name": "Instagram",
+            "url": "https:\/\/instagram.com",
+            "icon": "fa-brands fa-instagram",
+            "visible": true
+        }
+    ]
+}

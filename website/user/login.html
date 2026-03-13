@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - LUXE FASHION</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#000',
+                        'primary-hover': '#333',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS - FIXED PATH -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="text-black font-sans h-screen flex flex-col justify-between items-center overflow-x-hidden p-6 relative bg-white"> 
+    
+    <!-- Animated background patterns -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] overflow-hidden bg-gradient-to-br from-white to-gray-100">
+        <div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-black rounded-full blur-[150px] opacity-10 animate-pulse"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-gray-300 rounded-full blur-[150px] opacity-10 animate-pulse" style="animation-delay: 2s;"></div>
+    </div>
+
+    <!-- Header Logo - FIXED PATH -->
+    <a href="home.html" class="flex items-center gap-2 text-2xl font-bold tracking-tighter mt-10 relative z-10 transition-transform hover:scale-105">
+        <img src="assets/logo.png" alt="Logo" class="site-logo h-6 w-auto object-contain" onerror="this.src=''; this.style.display='none';">
+        <span>LUXE FASHION</span>
+    </a>
+
+    <!-- Auth Container -->
+    <main class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden relative z-10 my-10 border border-gray-100 p-10">
+        
+        <!-- Toggle Tabs -->
+        <div class="flex border-b border-gray-200 mb-8 relative">
+            <button id="tab-login" class="flex-1 pb-4 text-center font-bold text-sm tracking-wider uppercase transition text-black" onclick="switchTab('login')">Sign In</button>
+            <button id="tab-signup" class="flex-1 pb-4 text-center font-bold text-sm tracking-wider uppercase transition text-gray-400" onclick="switchTab('signup')">Sign Up</button>
+            <div id="tab-indicator" class="absolute bottom-[-1px] left-0 w-1/2 h-0.5 bg-black transition-all duration-300"></div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="form-login" class="space-y-6 transition-opacity duration-300">
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
+                <div class="relative">
+                    <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="email" id="log-email" required class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-gray-50 focus:bg-white" placeholder="you@example.com">
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Password</label>
+                    <a href="#" id="btn-forgot-password" class="text-[10px] text-gray-400 hover:text-black underline tracking-wide">Forgot Password?</a>
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="password" id="log-pass" required class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-gray-50 focus:bg-white" placeholder="••••••••">
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full bg-black text-white hover:bg-gray-800 py-4 rounded-lg font-bold text-sm uppercase tracking-wide group flex justify-center items-center gap-2 transition-colors">
+                Sign In
+                <i class="fa-solid fa-arrow-right-to-bracket transition-transform group-hover:translate-x-1"></i>
+            </button>
+        </form>
+
+        <!-- Sign Up Form (Initially Hidden) -->
+        <form id="form-signup" class="space-y-6 hidden transition-opacity duration-300">
+            <div class="flex gap-4">
+                <div class="w-1/2">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">First Name</label>
+                    <div class="relative">
+                        <i class="fa-regular fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="reg-fname" required class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-gray-50 focus:bg-white" placeholder="John">
+                    </div>
+                </div>
+                <div class="w-1/2">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Last Name</label>
+                    <div class="relative">
+                        <input type="text" id="reg-lname" required class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-gray-50 focus:bg-white" placeholder="Doe">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
+                <div class="relative">
+                    <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="email" id="reg-email" required class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-gray-50 focus:bg-white" placeholder="you@example.com">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Password</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="password" id="reg-pass" required minlength="6" class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-gray-50 focus:bg-white" placeholder="Min 6 characters">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Confirm Password</label>
+                <div class="relative">
+                    <i class="fa-solid fa-check absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="password" id="reg-confirm-pass" required minlength="6" class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-gray-50 focus:bg-white" placeholder="Repeat Password">
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="reg-terms" required class="w-4 h-4 text-black bg-gray-100 border-gray-300 rounded focus:ring-black focus:ring-2">
+                <label for="reg-terms" class="text-xs text-gray-500">I agree to the <a href="#" class="underline hover:text-black">Terms and Conditions</a></label>
+            </div>
+            
+            <button type="submit" class="w-full bg-black text-white hover:bg-gray-800 py-4 rounded-lg font-bold text-sm uppercase tracking-wide group flex justify-center items-center gap-2 transition-colors">
+                Create Account
+                <i class="fa-solid fa-user-plus transition-transform group-hover:translate-x-1"></i>
+            </button>
+            
+        </form>
+
+        <div class="mt-8 relative">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-200"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-500">Or continue with</span>
+            </div>
+        </div>
+
+        <!-- OAuth / Social login demo -->
+        <div class="mt-6 flex flex-col gap-3">
+            <button id="btn-google" class="w-full border border-gray-300 rounded-lg py-3 text-sm font-semibold hover:bg-gray-50 transition flex justify-center items-center gap-3">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4" alt="Google Logo">
+                Continue with Google
+            </button>
+            <button id="btn-facebook" class="w-full border border-[#1877F2] bg-[#1877F2] text-white rounded-lg py-3 text-sm font-semibold hover:bg-[#166fe5] transition flex justify-center items-center gap-3">
+                <i class="fa-brands fa-facebook-f text-lg"></i>
+                Continue with Facebook
+            </button>
+        </div>
+    </main>
+
+    <p class="text-xs text-gray-400 mb-10 tracking-widest uppercase">Secure Login Gateway</p>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-10 relative transform scale-95 transition-transform duration-300" id="forgot-content">
+            <button id="close-forgot" class="absolute top-6 right-6 text-gray-400 hover:text-black transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-2">Forgot Password?</h2>
+            <p class="text-sm text-gray-500 mb-8">Enter your email address and we'll send you a professional reset link.</p>
+            
+            <form id="form-forgot">
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
+                    <div class="relative">
+                        <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="forgot-email" required class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-gray-50 focus:bg-white" placeholder="you@example.com">
+                    </div>
+                </div>
+                <button type="submit" id="btn-send-reset" class="w-full bg-black text-white hover:bg-gray-800 py-4 rounded-lg font-bold text-sm uppercase tracking-wide flex justify-center items-center gap-2 transition-colors">
+                    <span>Send Reset Link</span>
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Error/Success Toast -->
+    <div id="toast" class="fixed top-6 right-6 px-6 py-4 rounded-lg shadow-lg text-white font-medium text-sm transition-transform duration-300 translate-x-[150%] z-50">
+        Message
+    </div>
+
+    <script type="module">
+        import { auth } from '../firebase_config.js'; // FIXED PATH
+        import { 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword,
+            sendEmailVerification,
+            updateProfile,
+            GoogleAuthProvider,
+            FacebookAuthProvider,
+            signInWithPopup,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const tabLogin = document.getElementById('tab-login');
+            const tabSignup = document.getElementById('tab-signup');
+            const indc = document.getElementById('tab-indicator');
+            const fLogin = document.getElementById('form-login');
+            const fSignup = document.getElementById('form-signup');
+
+            window.switchTab = (tab) => {
+                if(tab === 'login') {
+                    indc.style.left = '0';
+                    tabLogin.classList.replace('text-gray-400', 'text-black');
+                    tabSignup.classList.replace('text-black', 'text-gray-400');
+                    
+                    fSignup.style.opacity = '0';
+                    setTimeout(() => {
+                        fSignup.classList.add('hidden');
+                        fLogin.classList.remove('hidden');
+                        setTimeout(() => fLogin.style.opacity = '1', 50);
+                    }, 200);
+
+                } else {
+                    indc.style.left = '50%';
+                    tabSignup.classList.replace('text-gray-400', 'text-black');
+                    tabLogin.classList.replace('text-black', 'text-gray-400');
+                    
+                    fLogin.style.opacity = '0';
+                    setTimeout(() => {
+                        fLogin.classList.add('hidden');
+                        fSignup.classList.remove('hidden');
+                        setTimeout(() => fSignup.style.opacity = '1', 50);
+                    }, 200);
+                }
+            };
+
+            function showToast(msg, isError = true) {
+                const toast = document.getElementById('toast');
+                toast.innerText = msg;
+                toast.className = `fixed top-6 right-6 px-6 py-4 rounded-lg shadow-lg text-white font-medium text-sm transition-transform duration-300 z-50 transform flex items-center gap-2 ${isError ? 'bg-red-500' : 'bg-green-500'}`;
+                toast.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-xmark' : 'fa-circle-check'}"></i> ${msg}`;
+                
+                requestAnimationFrame(() => toast.style.transform = 'translateX(0)');
+                
+                setTimeout(() => {
+                    toast.style.transform = 'translateX(150%)';
+                }, 4000);
+            }
+
+            async function syncDatabase(user, provider) {
+                try {
+                    let firstName = '';
+                    let lastName = '';
+                    
+                    if (user.displayName) {
+                        let parts = user.displayName.split(' ');
+                        firstName = parts[0] || '';
+                        lastName = parts.slice(1).join(' ') || '';
+                    }
+
+                    const response = await fetch('../sync_user.php', { // FIXED PATH
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            firebase_uid: user.uid,
+                            first_name: firstName,
+                            last_name: lastName,
+                            email: user.email,
+                            auth_provider: provider,
+                            is_verified: user.emailVerified
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        const cartData = JSON.parse(localStorage.getItem('luxury_cart')) || [];
+                        window.location.href = cartData.length > 0 ? 'checkout.html' : 'dashboard.html';
+                    } else {
+                        console.error('Sync failed:', data.message);
+                        showToast('Failed to sync user with local database.');
+                    }
+                } catch (error) {
+                    console.error('Database Sync Error:', error);
+                    showToast('Database Sync Error');
+                }
+            }
+
+            // Register Setup
+            fSignup.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const firstName = document.getElementById('reg-fname').value.trim();
+                const lastName = document.getElementById('reg-lname').value.trim();
+                const email = document.getElementById('reg-email').value.trim();
+                const pass = document.getElementById('reg-pass').value;
+                const confirmPass = document.getElementById('reg-confirm-pass').value;
+                const terms = document.getElementById('reg-terms').checked;
+
+                if(pass !== confirmPass) return showToast('Passwords do not match.');
+                if(!terms) return showToast('You must agree to terms and conditions.');
+
+                const btn = e.target.querySelector('button[type="submit"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
+                
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    const user = userCredential.user;
+                    
+                    await updateProfile(user, { displayName: `${firstName} ${lastName}` });
+                    await sendEmailVerification(user);
+                    
+                    showToast('Account created! Please check your email to verify.', false);
+                    await signOut(auth);
+                    
+                    setTimeout(() => { switchTab('login'); }, 2000);
+                } catch(error) {
+                    showToast(error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                }
+            });
+
+            // Login Setup
+            fLogin.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('log-email').value.trim();
+                const pass = document.getElementById('log-pass').value;
+
+                const btn = e.target.querySelector('button[type="submit"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                    const user = userCredential.user;
+
+                    if (!user.emailVerified) {
+                        await signOut(auth);
+                        showToast('Please verify your email address before logging in.');
+                    } else {
+                        showToast('Welcome back! Syncing...', false);
+                        await syncDatabase(user, 'Email');
+                    }
+                } catch(error) {
+                    showToast(error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                }
+            });
+
+            // Social Logins
+            const googleProvider = new GoogleAuthProvider();
+            const facebookProvider = new FacebookAuthProvider();
+
+            async function handleSocialLogin(providerInstance, providerName) {
+                try {
+                    const userCredential = await signInWithPopup(auth, providerInstance);
+                    const user = userCredential.user;
+                    showToast(`${providerName} login successful! Syncing...`, false);
+                    await syncDatabase(user, providerName);
+                } catch (error) {
+                    showToast(error.message);
+                }
+            }
+
+            document.getElementById('btn-google').addEventListener('click', () => handleSocialLogin(googleProvider, 'Google'));
+            document.getElementById('btn-facebook').addEventListener('click', () => handleSocialLogin(facebookProvider, 'Facebook'));
+
+            // Forgot Password Modal Logic
+            const forgotModal = document.getElementById('forgot-modal');
+            const forgotContent = document.getElementById('forgot-content');
+            const btnForgot = document.getElementById('btn-forgot-password');
+            const closeForgot = document.getElementById('close-forgot');
+            const formForgot = document.getElementById('form-forgot');
+
+            btnForgot.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotModal.classList.remove('hidden');
+                setTimeout(() => {
+                    forgotModal.classList.remove('opacity-0');
+                    forgotContent.classList.remove('scale-95');
+                }, 10);
+            });
+
+            const hideForgot = () => {
+                forgotModal.classList.add('opacity-0');
+                forgotContent.classList.add('scale-95');
+                setTimeout(() => {
+                    forgotModal.classList.add('hidden');
+                }, 300);
+            };
+
+            closeForgot.addEventListener('click', hideForgot);
+            forgotModal.addEventListener('click', (e) => {
+                if(e.target === forgotModal) hideForgot();
+            });
+
+            formForgot.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgot-email').value.trim();
+                const btn = document.getElementById('btn-send-reset');
+                const originalText = btn.innerHTML;
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch('process_reset.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        showToast('Reset link sent successfully!', false);
+                        hideForgot();
+                        formForgot.reset();
+                    } else {
+                        showToast(data.message || 'Email not found or error occurred.');
+                    }
+                } catch (error) {
+                    console.error('Reset Error:', error);
+                    showToast('An error occurred. Please try again.');
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

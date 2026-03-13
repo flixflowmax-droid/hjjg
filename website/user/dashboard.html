@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard - LUXE FASHION</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--primary-color)',
+                        'primary-hover': 'var(--primary-hover)',
+                        'primary-contrast': 'var(--primary-contrast)',
+                        secondary: 'var(--secondary-color)',
+                        accent: 'var(--accent-color)',
+                        background: 'var(--bg-color)',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="page-enter text-black font-sans">
+
+    <!-- Header -->
+    <header class="py-4 bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 lg:px-12 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="home.html" class="flex items-center gap-2 text-xl font-black tracking-tighter">
+                <img src="assets/logo.png" alt="Logo" class="site-logo h-8 w-auto object-contain">
+                <span>LUXE FASHION</span>
+            </a>
+
+            <!-- Navigation Links (Desktop) -->
+            <nav class="hidden md:flex gap-8 text-xs font-semibold tracking-wide text-gray-800 uppercase">
+                <a href="shop.html?category=new" class="hover:text-primary transition">New Arrivals</a>
+                <div class="relative group cursor-pointer flex items-center gap-1">
+                    <span class="hover:text-primary transition">Collections</span>
+                    <i class="fa-solid fa-chevron-down text-[8px] text-gray-400"></i>
+                </div>
+                <a href="shop.html?category=women" class="hover:text-primary transition">Women</a>
+                <a href="shop.html?category=men" class="hover:text-primary transition">Men</a>
+                <a href="shop.html?category=sale" class="text-primary hover:text-primary-hover transition">Flash Sale</a>
+            </nav>
+
+            <!-- Search, User, Cart -->
+            <div class="flex items-center gap-6 relative">
+                <!-- Search Bar -->
+                <div class="hidden md:flex relative items-center">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" id="desk-search" placeholder="Search trends..." class="search-input pl-10 pr-4 py-2 rounded-full bg-black/5 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none text-xs transition-all w-56 text-black placeholder-gray-500">
+                    </div>
+                </div>
+
+                <!-- Mobile Search Icon -->
+                <button class="md:hidden hover:text-primary transition text-gray-800" onclick="toggleMobileSearch()" title="Search">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+                
+                <a href="#" class="cart-toggle relative hover:text-primary transition text-gray-800" title="Bag">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span class="cart-badge absolute -top-1.5 -right-2 bg-primary text-primary-contrast text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+                </a>
+                
+                <button class="hover:text-primary transition text-gray-800 ml-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Full-Screen Menu Overlay -->
+    <div id="mobile-menu" class="mobile-menu-overlay">
+        <button id="close-menu-btn" class="absolute top-6 right-8 text-gray-400 hover:text-black transition">
+            <i class="fa-solid fa-xmark text-4xl"></i>
+        </button>
+        <nav class="flex flex-col items-center">
+            <a href="home.html">Home</a>
+            <a href="shop.html?category=new">New Arrivals</a>
+            <a href="shop.html?category=collections">Collections</a>
+            <a href="shop.html?category=women">Women</a>
+            <a href="shop.html?category=men">Men</a>
+            <a href="shop.html?category=accessories">Accessories</a>
+            <a href="shop.html?category=sale" class="text-primary !text-primary hover:!text-primary-hover">Flash Sale</a>
+            <div class="h-px w-12 bg-gray-200 my-4"></div>
+            <a href="about.html" class="!text-xl !font-medium !text-gray-500 hover:!text-black">About The Brand</a>
+            <a href="contact.html" class="!text-xl !font-medium !text-gray-500 hover:!text-black">Contact Us</a>
+        </nav>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div id="mobile-search-bar" class="fixed w-full top-0 left-0 bg-white shadow-md z-[60] transform -translate-y-full transition-transform duration-300 py-4 px-6 flex items-center gap-4">
+        <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" id="mob-search" placeholder="Search trends..." class="search-input w-full pl-10 pr-4 py-2 rounded-full bg-black/5 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none text-sm text-black placeholder-gray-500">
+        </div>
+        <button onclick="toggleMobileSearch()" class="text-gray-400 hover:text-black">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+    <div id="cart-drawer" class="cart-drawer px-6 py-6 font-sans">
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold tracking-tight">Your Bag</h2>
+            <button id="close-cart" class="text-gray-400 hover:text-black transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto pr-2 space-y-4"></div>
+        <div class="mt-6 border-t pt-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-gray-500">Subtotal</span>
+                <span id="cart-subtotal" class="text-xl font-bold">৳0.00</span>
+            </div>
+            <a href="checkout.html" class="btn-primary w-full block text-center py-4 rounded-md font-semibold text-lg tracking-wide">Proceed to Checkout</a>
+        </div>
+    </div>
+
+    <!-- Dashboard Main -->
+    <main class="container mx-auto px-6 lg:px-12 py-12 gap-8 flex flex-col lg:flex-row">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full lg:w-1/4">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-24">
+                <div class="text-center mb-8 border-b pb-8">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-[--primary-color] to-pink-300 rounded-full mx-auto flex items-center justify-center text-white text-3xl font-black shadow-lg mb-4" id="user-initial">U</div>
+                    <h2 class="text-xl font-bold" id="user-name">User Name</h2>
+                    <p class="text-sm text-gray-500 mt-1" id="user-tier"><i class="fa-solid fa-star text-amber-400"></i> Luxe Member</p>
+                </div>
+
+                <nav class="space-y-2 font-medium text-gray-600">
+                    <a href="#orders" class="block py-2.5 px-4 rounded-lg bg-gray-50 text-black shadow-sm font-bold border-l-4 border-black transition"><i class="fa-solid fa-box w-6 text-gray-400"></i> Order History</a>
+                    <a href="#profile" class="block py-3 px-4 rounded-lg hover:bg-gray-50 hover:text-black hover:border-l-4 hover:border-gray-300 border-l-4 border-transparent transition"><i class="fa-regular fa-user w-6 text-gray-400"></i> Profile Details</a>
+                    <a href="#wishlist" class="block py-3 px-4 rounded-lg hover:bg-gray-50 hover:text-black hover:border-l-4 hover:border-gray-300 border-l-4 border-transparent transition"><i class="fa-regular fa-heart w-6 text-gray-400"></i> Wishlist <span class="bg-[--primary-color] text-white text-[10px] px-2 py-0.5 rounded-full float-right">12</span></a>
+                    <a href="#settings" class="block py-3 px-4 rounded-lg hover:bg-gray-50 hover:text-black hover:border-l-4 hover:border-gray-300 border-l-4 border-transparent transition"><i class="fa-solid fa-gear w-6 text-gray-400"></i> Account Settings</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <div class="flex-1 space-y-8">
+
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <!-- Stat Card 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Total Orders</p>
+                    <div class="flex items-end gap-3">
+                        <span class="text-4xl font-black text-[#111]" id="stat-orders">0</span>
+                        <i class="fa-solid fa-boxes-stacked text-3xl text-gray-200 ml-auto mr-2"></i>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Reward Points</p>
+                    <div class="flex items-end gap-3">
+                        <span class="text-4xl font-black text-[--primary-color]">450</span>
+                        <i class="fa-brands fa-sketch text-3xl text-pink-100 ml-auto mr-2"></i>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform">
+                    <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Member Since</p>
+                    <div class="flex items-end gap-3">
+                        <span class="text-3xl font-bold text-gray-700 mt-2">Oct 2024</span>
+                        <i class="fa-regular fa-calendar-check text-3xl text-gray-200 ml-auto mr-2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hidden" id="profile-section">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Profile Details</h2>
+                </div>
+                <div class="p-8">
+                    <form id="profile-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">First Name</label>
+                                <input type="text" id="p-fname" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition" placeholder="John">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Last Name</label>
+                                <input type="text" id="p-lname" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition" placeholder="Doe">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Email Address (Read Only)</label>
+                            <input type="email" id="p-email" readonly class="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-400 bg-gray-50 cursor-not-allowed" value="user@example.com">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Phone Number</label>
+                            <input type="tel" id="p-phone" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition" placeholder="+880 1xxx-xxxxxx">
+                        </div>
+                        <button type="submit" class="btn-primary px-8 py-3 rounded-md font-bold text-sm tracking-wide">Save Profile Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Address Book -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hidden" id="address-section">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Shipping Address</h2>
+                </div>
+                <div class="p-8">
+                    <form id="address-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Division</label>
+                                <select id="p-division" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-white appearance-none cursor-pointer">
+                                    <option value="">Select Division</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">District</label>
+                                <select id="p-district" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition bg-white appearance-none cursor-pointer">
+                                    <option value="">Select District</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">City / Area</label>
+                                <input type="text" id="p-city" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition" placeholder="Dhanmondi, Road 2">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Zip Code</label>
+                                <input type="text" id="p-zip" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition" placeholder="1209">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary px-8 py-3 rounded-md font-bold text-sm tracking-wide">Save Shipping Address</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Account Settings (Password) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hidden" id="settings-section">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Account Security</h2>
+                </div>
+                <div class="p-8">
+                    <div class="bg-amber-50 border border-amber-100 p-4 rounded-lg mb-8 flex items-start gap-4">
+                        <i class="fa-solid fa-shield-halved text-amber-500 mt-1"></i>
+                        <p class="text-sm text-amber-800">You can update your security settings here. If you used Google or Facebook to sign in, password management is handled by the respective provider.</p>
+                    </div>
+
+                    <form id="password-form" class="space-y-6 max-w-sm">
+                        <h3 class="font-bold text-gray-400 uppercase text-[10px] tracking-widest border-b pb-2 mb-4">Change Password</h3>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Current Password</label>
+                            <input type="password" id="old-pass" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition" placeholder="••••••••">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">New Password</label>
+                            <input type="password" id="new-pass" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition" placeholder="Min 6 characters">
+                        </div>
+                        <button type="submit" class="bg-black text-white px-8 py-3 rounded-md font-bold text-sm tracking-wide hover:bg-gray-800 transition">Update Password</button>
+                    </form>
+
+                    <div class="mt-12 pt-8 border-t">
+                        <h3 class="font-bold text-gray-400 uppercase text-[10px] tracking-widest border-b pb-2 mb-4">Other Actions</h3>
+                        <button id="forgot-pass-btn" class="text-sm text-gray-500 hover:text-black flex items-center gap-2 underline">
+                            <i class="fa-solid fa-envelope-open-text"></i> Send me a Firebase password reset link
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table (Original) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" id="orders-section">
+                <div class="p-6 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Recent Orders</h2>
+                    <button class="text-[--primary-color] text-sm font-semibold hover:underline">Download Invoices <i class="fa-solid fa-download ml-1 text-xs"></i></button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                                <th class="p-4 font-bold">Order ID</th>
+                                <th class="p-4 font-bold">Date</th>
+                                <th class="p-4 font-bold">Items</th>
+                                <th class="p-4 font-bold">Status</th>
+                                <th class="p-4 font-bold text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-medium" id="orders-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div id="no-orders" class="p-16 text-center hidden">
+                    <i class="fa-solid fa-box-open text-6xl text-gray-200 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">No orders found</h3>
+                    <p class="text-gray-500 mb-6">You haven't placed any orders yet.</p>
+                    <a href="shop.html" class="btn-primary px-8 py-3 rounded-md font-bold text-sm tracking-wide">Start Shopping</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+        <!-- Global Footer -->
+    <footer class="bg-[--secondary-color] text-white pt-24 pb-12 mt-24">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
+                <!-- Branding -->
+                <div>
+                    <a href="home.html" class="flex items-center gap-2 text-2xl font-bold tracking-tighter mb-6">
+                        <img src="assets/logo.png" alt="Logo" class="site-logo h-6 w-auto object-contain">
+                        <span>LUXE FASHION</span>
+                    </a>
+                    <p data-text-key="footer_about" class="text-gray-400 text-sm mb-6 leading-relaxed">Redefining modern luxury through sustainable practices and timeless craftsmanship. Join our journey into the future of fashion.</p>
+                    <div class="flex gap-4">
+                        <a href="https://instagram.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://twitter.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="https://tiktok.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links 1 -->
+                <div>
+                    <h4 data-text-key="footer_col_1_title" class="font-bold mb-6 text-lg">Shop Collections</h4>
+                    <ul id="cms-footer-col-1" class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="shop.html?category=new" class="hover:text-[--primary-color] transition">Women's New Arrivals</a></li>
+                        <li><a href="shop.html?category=men" class="hover:text-[--primary-color] transition">Men's Essentials</a></li>
+                        <li><a href="shop.html?category=accessories" class="hover:text-[--primary-color] transition">Luxury Accessories</a></li>
+                        <li><a href="shop.html?category=collections" class="hover:text-[--primary-color] transition">Runway Collection</a></li>
+                        <li><a href="shop.html?sale=true" class="hover:text-[--primary-color] transition">Limited Edition Drops</a></li>
+                    </ul>
+                </div>
+
+                <!-- Links 2 -->
+                <div>
+                    <h4 data-text-key="footer_col_2_title" class="font-bold mb-6 text-lg">Customer Care</h4>
+                    <ul id="cms-footer-col-2" class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="contact.html" class="hover:text-[--primary-color] transition">Contact Us</a></li>
+                        <li><a href="faq.html" class="hover:text-[--primary-color] transition">FAQ</a></li>
+                        <li><a href="returns.html" class="hover:text-[--primary-color] transition">Returns &amp; Exchanges</a></li>
+                        <li><a href="about.html" class="hover:text-[--primary-color] transition">About Us</a></li>
+                        <li><a href="dashboard.html" class="hover:text-[--primary-color] transition">Order Tracking</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-[10px] text-gray-600 border-t border-white/10 pt-8 mt-8 mb-8 text-justify leading-relaxed">
+                <h1 data-text-key="footer_seo_title" class="font-bold text-gray-500 mb-2 text-xs">Premium Fashion Destination</h1>
+                <span data-text-key="footer_seo_text">Luxe Fashion is the leading premium fashion retailer, curating global top designers. We specialize in contemporary luxury, avant-garde pieces, structured blazers, high-performance tailoring, and artisanal leather accessories. Our platform offers an immersive shopping experience featuring the latest autumn/winter trends...</span>
+            </div>
+
+            <!-- Bottom -->
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p>&copy; 2024 LUXE Fashion Global Inc. All rights reserved.</p>
+                <div id="cms-footer-bottom-links" class="flex gap-6">
+                    <a href="home.html" class="hover:text-white transition">Homepage</a>
+                    <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="terms.html" class="hover:text-white transition">Terms &amp; Conditions</a>
+                </div>
+                <div class="flex gap-4 text-lg">
+                    <i class="fa-brands fa-cc-visa opacity-50"></i>
+                    <i class="fa-brands fa-cc-mastercard opacity-50"></i>
+                    <i class="fa-solid fa-money-bill-wave opacity-50" title="Cash on Delivery"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = {
+                orders: document.getElementById('orders-section'),
+                profile: document.getElementById('profile-section'),
+                address: document.getElementById('address-section'),
+                settings: document.getElementById('settings-section')
+            };
+
+            const navLinks = document.querySelectorAll('aside nav a');
+            
+            function showSection(id) {
+                Object.values(sections).forEach(s => s.classList.add('hidden'));
+                if (sections[id]) sections[id].classList.remove('hidden');
+                
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === `#${id}`) {
+                        link.classList.add('bg-gray-50', 'text-black', 'shadow-sm', 'font-bold', 'border-l-4', 'border-black');
+                        link.classList.remove('border-transparent');
+                    } else {
+                        link.classList.remove('bg-gray-50', 'text-black', 'shadow-sm', 'font-bold', 'border-l-4', 'border-black');
+                        link.classList.add('border-l-4', 'border-transparent');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const id = link.getAttribute('href').substring(1);
+                    if (sections[id]) {
+                        e.preventDefault();
+                        showSection(id);
+                    }
+                });
+            });
+
+            // Initial section
+            const hash = window.location.hash.substring(1) || 'orders';
+            showSection(sections[hash] ? hash : 'orders');
+
+            // --- BD Geo Data ---
+            const bdData = {
+                "Dhaka": ["Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail"],
+                "Chittagong": ["Bandarban", "Brahmanbaria", "Chandpur", "Chattogram", "Cumilla", "Cox's Bazar", "Feni", "Khagrachari", "Lakshmipur", "Noakhali", "Rangamati"],
+                "Rajshahi": ["Bogura", "Joypurhat", "Naogaon", "Natore", "Chapainawabganj", "Pabna", "Rajshahi", "Sirajganj"],
+                "Khulna": ["Bagerhat", "Chuadanga", "Jashore", "Jhenaidah", "Khulna", "Kushtia", "Magura", "Meherpur", "Narail", "Satkhira"],
+                "Barishal": ["Barguna", "Barishal", "Bhola", "Jhalokati", "Patuakhali", "Pirojpur"],
+                "Sylhet": ["Habiganj", "Moulvibazar", "Sunamganj", "Sylhet"],
+                "Rangpur": ["Dinajpur", "Gaibandha", "Kurigram", "Lalmonirhat", "Nilphamari", "Panchagarh", "Rangpur", "Thakurgaon"],
+                "Mymensingh": ["Jamalpur", "Mymensingh", "Netrokona", "Sherpur"]
+            };
+
+            const divSelect = document.getElementById('p-division');
+            const distSelect = document.getElementById('p-district');
+
+            Object.keys(bdData).forEach(div => {
+                const opt = document.createElement('option');
+                opt.value = div; opt.innerText = div;
+                divSelect.appendChild(opt);
+            });
+
+            divSelect.addEventListener('change', function() {
+                const div = this.value;
+                distSelect.innerHTML = '<option value="">Select District</option>';
+                if (div && bdData[div]) {
+                    bdData[div].forEach(dist => {
+                        const opt = document.createElement('option');
+                        opt.value = dist; opt.innerText = dist;
+                        distSelect.appendChild(opt);
+                    });
+                }
+            });
+
+            // --- Auth & Data Loading ---
+            async function loadDashboard() {
+                const res = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_session' })
+                });
+                const authData = await res.json();
+                
+                if (!authData.success) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const user = authData.user;
+                document.getElementById('user-name').innerText = user.name;
+                document.getElementById('user-initial').innerText = user.name.charAt(0).toUpperCase();
+
+                // Fetch full profile (including address)
+                const profRes = await fetch('api/profile_api.php?action=get_profile');
+                const profData = await profRes.json();
+                if (profData.success) {
+                    const u = profData.user;
+                    const nameParts = u.name.split(' ');
+                    document.getElementById('p-fname').value = nameParts[0] || '';
+                    document.getElementById('p-lname').value = nameParts.slice(1).join(' ') || '';
+                    document.getElementById('p-email').value = u.email;
+                    document.getElementById('p-phone').value = u.phone || '';
+                    document.getElementById('p-division').value = u.address_division || '';
+                    // Trigger district population
+                    divSelect.dispatchEvent(new Event('change'));
+                    document.getElementById('p-district').value = u.address_district || '';
+                    document.getElementById('p-city').value = u.address_city || '';
+                    document.getElementById('p-zip').value = u.address_zip || '';
+                }
+
+                // Fetch Order History
+                const orderRes = await fetch('api/profile_api.php?action=get_orders');
+                const orderData = await orderRes.json();
+                
+                const statsOrders = document.getElementById('stat-orders');
+                const tbody = document.getElementById('orders-tbody');
+                const noOrders = document.getElementById('no-orders');
+
+                if (orderData.success && orderData.orders.length > 0) {
+                    statsOrders.innerText = orderData.orders.length;
+                    tbody.innerHTML = orderData.orders.map(order => {
+                        const statusClass = order.status === 'Processing' ? 'text-amber-500 bg-amber-50' : 
+                                            order.status === 'Delivered' ? 'text-green-500 bg-green-50' : 
+                                            'text-gray-500 bg-gray-50';
+                        const firstItemImg = order.items[0]?.image1 || 'assets/placeholder.jpg';
+                        return `
+                            <tr class="border-b last:border-0 hover:bg-gray-50 transition cursor-pointer group">
+                                <td class="p-4"><span class="font-mono font-bold tracking-widest bg-gray-100 px-2 py-1 rounded text-xs">${order.id}</span></td>
+                                <td class="p-4 text-gray-500">${new Date(order.created_at).toLocaleDateString()}</td>
+                                <td class="p-4">
+                                    <div class="flex items-center gap-3">
+                                        <img src="${firstItemImg}" class="w-10 h-10 rounded-md object-cover">
+                                        <span class="text-xs text-gray-500">${order.items.length} item(s)</span>
+                                    </div>
+                                </td>
+                                <td class="p-4"><span class="px-3 py-1 text-xs font-bold rounded-full ${statusClass}">${order.status}</span></td>
+                                <td class="p-4 text-right font-bold text-lg">৳${parseFloat(order.total).toFixed(2)}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    statsOrders.innerText = '0';
+                    tbody.closest('table').classList.add('hidden');
+                    noOrders.classList.remove('hidden');
+                }
+            }
+
+            // --- Form Handlers ---
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = {
+                    name: document.getElementById('p-fname').value + ' ' + document.getElementById('p-lname').value,
+                    phone: document.getElementById('p-phone').value
+                };
+                const res = await fetch('api/profile_api.php?action=update_profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                LuxeUI.alert(result.message, result.success ? 'Profile Updated' : 'Update Failed', result.success ? 'fa-circle-check' : 'fa-circle-xmark', result.success ? '#10b981' : '#ef4444');
+                if (result.success) location.reload();
+            });
+
+            document.getElementById('address-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = {
+                    address_division: document.getElementById('p-division').value,
+                    address_district: document.getElementById('p-district').value,
+                    address_city: document.getElementById('p-city').value,
+                    address_zip: document.getElementById('p-zip').value
+                };
+                const res = await fetch('api/profile_api.php?action=update_profile', { // Reuse update_profile
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                LuxeUI.alert(result.message, result.success ? 'Address Saved' : 'Update Failed', result.success ? 'fa-location-dot' : 'fa-circle-xmark', result.success ? '#10b981' : '#ef4444');
+            });
+
+            document.getElementById('password-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = {
+                    old_password: document.getElementById('old-pass').value,
+                    new_password: document.getElementById('new-pass').value
+                };
+                const res = await fetch('api/profile_api.php?action=change_password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                LuxeUI.alert(result.message, result.success ? 'Password Changed' : 'Update Failed', result.success ? 'fa-shield-halved' : 'fa-circle-xmark', result.success ? '#10b981' : '#ef4444');
+                if (result.success) e.target.reset();
+            });
+
+            document.getElementById('logout-btn')?.addEventListener('click', async () => {
+                await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'logout' })
+                });
+                window.location.href = 'home.html';
+            });
+
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>

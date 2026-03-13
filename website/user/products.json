@@ -1,0 +1,91 @@
+[
+    {
+        "id": "p1",
+        "name": "Silk Minimalist Gown",
+        "price": 299,
+        "originalPrice": 450,
+        "category": "Dresses",
+        "image1": "assets\/gown-1.jpg",
+        "image2": "assets\/gown-1.jpg",
+        "colors": [
+            "#000000",
+            "#ffffff"
+        ],
+        "sizes": [
+            "S",
+            "M",
+            "L"
+        ],
+        "isNew": true,
+        "isFlashSale": false,
+        "feature": "",
+        "sections": [],
+        "isSoldOut": true
+    },
+    {
+        "id": "p5",
+        "name": "Oversized Cashmere",
+        "price": 410,
+        "originalPrice": null,
+        "category": "Knitwear",
+        "image1": "assets\/cashmere-1.jpg",
+        "image2": "assets\/cashmere-1.jpg",
+        "colors": [
+            "#e5e5e5",
+            "#111111"
+        ],
+        "sizes": [
+            "M",
+            "L",
+            "XL"
+        ],
+        "isNew": false,
+        "isFlashSale": true,
+        "feature": "",
+        "isSoldOut": false,
+        "sections": [
+            "1",
+            "2",
+            "3"
+        ]
+    },
+    {
+        "id": "p4",
+        "name": "Sculptural Handbag",
+        "price": 320,
+        "originalPrice": null,
+        "category": "Accessories",
+        "image1": "assets\/handbag-1.jpg",
+        "image2": "assets\/handbag-1.jpg",
+        "colors": [
+            "#111111",
+            "#8b4513"
+        ],
+        "sizes": [
+            "One Size"
+        ],
+        "isNew": false,
+        "isFlashSale": false
+    },
+    {
+        "id": "p6",
+        "name": "Structured Blazer",
+        "price": 280,
+        "originalPrice": 350,
+        "category": "Outerwear",
+        "image1": "assets\/blazer-1.jpg",
+        "image2": "assets\/blazer-1.jpg",
+        "colors": [
+            "#111111",
+            "#000080"
+        ],
+        "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "isNew": true,
+        "isFlashSale": false
+    }
+]

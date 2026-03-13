@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - LUXE FASHION</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--primary-color)',
+                        'primary-hover': 'var(--primary-hover)',
+                        'primary-contrast': 'var(--primary-contrast)',
+                        secondary: 'var(--secondary-color)',
+                        accent: 'var(--accent-color)',
+                        background: 'var(--bg-color)',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Zoom specific */
+        .zoom-container {
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        .zoom-img {
+            transform-origin: center center;
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+<body class="page-enter bg-white">
+
+    <!-- Header -->
+    <header id="inner-header" class="sticky top-0 z-50 transition-all duration-300 py-4 bg-white shadow-sm text-black group">
+        <div class="container mx-auto px-6 lg:px-12 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="home.html" class="flex items-center gap-2 text-xl font-black tracking-tighter">
+                <img src="assets/logo.png" alt="Logo" class="site-logo h-8 w-auto object-contain">
+                <span>LUXE FASHION</span>
+            </a>
+
+            <!-- Navigation Links (Desktop) -->
+            <nav class="hidden md:flex gap-8 text-xs font-semibold tracking-wide text-gray-800 uppercase">
+                <a href="shop.html?category=new" class="hover:text-primary transition">New Arrivals</a>
+                <div class="relative group cursor-pointer flex items-center gap-1">
+                    <span class="hover:text-primary transition">Collections</span>
+                    <i class="fa-solid fa-chevron-down text-[8px] text-gray-400"></i>
+                </div>
+                <a href="shop.html?category=women" class="hover:text-primary transition">Women</a>
+                <a href="shop.html?category=men" class="hover:text-primary transition">Men</a>
+                <a href="shop.html?category=sale" class="text-primary hover:text-primary-hover transition">Flash Sale</a>
+            </nav>
+
+            <!-- Search, User, Cart -->
+            <div class="flex items-center gap-6 relative">
+                <!-- Search Bar -->
+                <div class="hidden md:flex relative items-center">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" id="desk-search" placeholder="Search trends..." class="search-input pl-10 pr-4 py-2 rounded-full bg-black/5 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none text-xs transition-all w-56 text-black placeholder-gray-500">
+                    </div>
+                </div>
+
+                <!-- Mobile Search Icon -->
+                <button class="md:hidden hover:text-primary transition text-gray-800" onclick="toggleMobileSearch()" title="Search">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+                
+                <a href="#" class="cart-toggle relative hover:text-primary transition text-gray-800" title="Bag">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span class="cart-badge absolute -top-1.5 -right-2 bg-primary text-primary-contrast text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+                </a>
+                
+                <button class="hover:text-primary transition text-gray-800 ml-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Full-Screen Menu Overlay -->
+    <div id="mobile-menu" class="mobile-menu-overlay">
+        <button id="close-menu-btn" class="absolute top-6 right-8 text-gray-400 hover:text-black transition">
+            <i class="fa-solid fa-xmark text-4xl"></i>
+        </button>
+        <nav class="flex flex-col items-center">
+            <a href="home.html">Home</a>
+            <a href="shop.html?category=new">New Arrivals</a>
+            <a href="shop.html?category=collections">Collections</a>
+            <a href="shop.html?category=women">Women</a>
+            <a href="shop.html?category=men">Men</a>
+            <a href="shop.html?category=accessories">Accessories</a>
+            <a href="shop.html?category=sale" class="text-primary !text-primary hover:!text-primary-hover">Flash Sale</a>
+            <div class="h-px w-12 bg-gray-200 my-4"></div>
+            <a href="about.html" class="!text-xl !font-medium !text-gray-500 hover:!text-black">About The Brand</a>
+            <a href="contact.html" class="!text-xl !font-medium !text-gray-500 hover:!text-black">Contact Us</a>
+        </nav>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div id="mobile-search-bar" class="fixed w-full top-0 left-0 bg-white shadow-md z-[60] transform -translate-y-full transition-transform duration-300 py-4 px-6 flex items-center gap-4">
+        <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" id="mob-search" placeholder="Search trends..." class="search-input w-full pl-10 pr-4 py-2 rounded-full bg-black/5 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none text-sm text-black placeholder-gray-500">
+        </div>
+        <button onclick="toggleMobileSearch()" class="text-gray-400 hover:text-black">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+    <div id="cart-drawer" class="cart-drawer px-6 py-6 font-sans">
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold tracking-tight">Your Bag</h2>
+            <button id="close-cart" class="text-gray-400 hover:text-black transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto pr-2 space-y-4"></div>
+        <div class="mt-6 border-t pt-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-gray-500">Subtotal</span>
+                <span id="cart-subtotal" class="text-xl font-bold">৳0.00</span>
+            </div>
+            <a href="checkout.html" class="btn-primary w-full block text-center py-4 rounded-md font-semibold text-lg tracking-wide">Proceed to Checkout</a>
+        </div>
+    </div>
+
+    <!-- Product Details Content -->
+    <main class="container mx-auto px-6 lg:px-12 py-12">
+        <nav class="text-sm font-medium text-gray-400 mb-8 border-b pb-4">
+            <a href="home.html" class="hover:text-black transition">Home</a>
+            <span class="mx-2">/</span>
+            <a href="shop.html" class="hover:text-black transition">Shop</a>
+            <span class="mx-2">/</span>
+            <span class="text-black" id="bc-name">Product</span>
+        </nav>
+
+        <div class="flex flex-col md:flex-row gap-12 lg:gap-20">
+            <!-- Galleries -->
+            <div class="w-full md:w-1/2 flex gap-4">
+                <div class="hidden sm:flex flex-col gap-4 w-20 shrink-0" id="thumbnail-gallery">
+                    <!-- Thumbnails generated by JS -->
+                </div>
+                <div class="flex-1 relative bg-[#f5f5f5] rounded-xl overflow-hidden aspect-[3/4] zoom-container" id="main-image-container">
+                    <img src="" id="main-image" class="w-full h-full object-cover zoom-img transition-transform" alt="Product">
+                </div>
+            </div>
+
+            <!-- Details -->
+            <div class="w-full md:w-1/2 flex flex-col justify-center">
+                <div class="mb-2">
+                    <span id="pd-category" class="text-xs text-gray-400 uppercase tracking-widest font-semibold border border-gray-200 px-3 py-1 rounded-full">Category</span>
+                </div>
+                <h1 id="pd-name" class="text-4xl md:text-5xl font-black tracking-tight mb-4 text-black">Product Name</h1>
+                
+                <div class="flex items-center gap-4 mb-6 pb-6 border-b">
+                    <span id="pd-price" class="text-3xl font-bold text-[--primary-color]">৳0.00</span>
+                    <span id="pd-original" class="text-xl text-gray-400 line-through hidden">৳0.00</span>
+                </div>
+                
+                <p class="text-gray-500 leading-relaxed mb-8">
+                    Elevate your wardrobe with this carefully crafted piece. Featuring premium materials and a modern silhouette tailored for comfort and uncompromised style. Experience luxury in every detail.
+                </p>
+
+                <!-- Color Selection -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-sm uppercase tracking-wider mb-3">Color</h4>
+                    <div class="flex gap-3" id="pd-colors">
+                        <!-- JS generated colors -->
+                    </div>
+                </div>
+
+                <!-- Size Selection -->
+                <div class="mb-8 relative">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="font-semibold text-sm uppercase tracking-wider">Size</h4>
+                        <button class="text-xs text-gray-400 underline hover:text-black">Size Guide</button>
+                    </div>
+                    <div class="flex flex-wrap gap-3" id="pd-sizes">
+                        <!-- JS generated sizes -->
+                    </div>
+                </div>
+
+                <!-- Add to cart module -->
+                <div class="flex gap-4 items-center">
+                    <div class="flex items-center border border-gray-300 rounded-lg h-14 w-32 justify-between px-4">
+                        <button id="qty-minus" class="text-gray-500 hover:text-black font-bold text-xl">-</button>
+                        <span id="qty-val" class="font-medium text-lg">1</span>
+                        <button id="qty-plus" class="text-gray-500 hover:text-black font-bold text-xl">+</button>
+                    </div>
+                    <button id="add-to-cart-btn" class="btn-primary flex-1 h-14 rounded-lg font-bold text-lg uppercase tracking-wide flex justify-center items-center gap-2">
+                        <span>Add To Bag</span>
+                        <i class="fa-solid fa-cart-arrow-down"></i>
+                    </button>
+                </div>
+
+                <div class="mt-8 pt-8 border-t grid grid-cols-2 gap-4 text-sm font-medium text-gray-600">
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-truck-fast text-[--primary-color]"></i> Cash on Delivery Available</div>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-rotate-left text-[--primary-color]"></i> 30-Day Returns</div>
+                    <div class="flex items-center gap-2"><i class="fa-solid fa-shield text-[--primary-color]"></i> Secure Checkout</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Products -->
+        <section class="mt-24 border-t pt-16" id="recommended-section">
+            <div class="flex justify-between items-end mb-10">
+                <h2 class="text-3xl font-black uppercase tracking-tight text-black">Recommended For You</h2>
+                <div class="flex gap-4 items-center">
+                    <a href="shop.html" class="text-sm font-bold underline hover:text-primary transition mr-4">View All</a>
+                    <button class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-black hover:text-white hover:border-black transition-colors" onclick="document.getElementById('recommended-products').scrollBy({left: -300, behavior: 'smooth'})">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <button class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-black hover:text-white hover:border-black transition-colors" onclick="document.getElementById('recommended-products').scrollBy({left: 300, behavior: 'smooth'})">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="slider-container" id="recommended-products">
+                <!-- JS generated products -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+        <!-- Global Footer -->
+    <footer class="bg-[--secondary-color] text-white pt-24 pb-12 mt-24">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
+                <!-- Branding -->
+                <div>
+                    <a href="home.html" class="flex items-center gap-2 text-2xl font-bold tracking-tighter mb-6">
+                        <img src="assets/logo.png" alt="Logo" class="site-logo h-6 w-auto object-contain">
+                        <span>LUXE FASHION</span>
+                    </a>
+                    <p data-text-key="footer_about" class="text-gray-400 text-sm mb-6 leading-relaxed">Redefining modern luxury through sustainable practices and timeless craftsmanship. Join our journey into the future of fashion.</p>
+                    <div class="flex gap-4">
+                        <a href="https://instagram.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://twitter.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="https://tiktok.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links 1 -->
+                <div>
+                    <h4 data-text-key="footer_col_1_title" class="font-bold mb-6 text-lg">Shop Collections</h4>
+                    <ul id="cms-footer-col-1" class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="shop.html?category=new" class="hover:text-[--primary-color] transition">Women's New Arrivals</a></li>
+                        <li><a href="shop.html?category=men" class="hover:text-[--primary-color] transition">Men's Essentials</a></li>
+                        <li><a href="shop.html?category=accessories" class="hover:text-[--primary-color] transition">Luxury Accessories</a></li>
+                        <li><a href="shop.html?category=collections" class="hover:text-[--primary-color] transition">Runway Collection</a></li>
+                        <li><a href="shop.html?sale=true" class="hover:text-[--primary-color] transition">Limited Edition Drops</a></li>
+                    </ul>
+                </div>
+
+                <!-- Links 2 -->
+                <div>
+                    <h4 data-text-key="footer_col_2_title" class="font-bold mb-6 text-lg">Customer Care</h4>
+                    <ul id="cms-footer-col-2" class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="contact.html" class="hover:text-[--primary-color] transition">Contact Us</a></li>
+                        <li><a href="faq.html" class="hover:text-[--primary-color] transition">FAQ</a></li>
+                        <li><a href="returns.html" class="hover:text-[--primary-color] transition">Returns &amp; Exchanges</a></li>
+                        <li><a href="about.html" class="hover:text-[--primary-color] transition">About Us</a></li>
+                        <li><a href="dashboard.html" class="hover:text-[--primary-color] transition">Order Tracking</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-[10px] text-gray-600 border-t border-white/10 pt-8 mt-8 mb-8 text-justify leading-relaxed">
+                <h1 data-text-key="footer_seo_title" class="font-bold text-gray-500 mb-2 text-xs">Premium Fashion Destination</h1>
+                <span data-text-key="footer_seo_text">Luxe Fashion is the leading premium fashion retailer, curating global top designers. We specialize in contemporary luxury, avant-garde pieces, structured blazers, high-performance tailoring, and artisanal leather accessories. Our platform offers an immersive shopping experience featuring the latest autumn/winter trends...</span>
+            </div>
+
+            <!-- Bottom -->
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p>&copy; 2024 LUXE Fashion Global Inc. All rights reserved.</p>
+                <div id="cms-footer-bottom-links" class="flex gap-6">
+                    <a href="home.html" class="hover:text-white transition">Homepage</a>
+                    <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="terms.html" class="hover:text-white transition">Terms &amp; Conditions</a>
+                </div>
+                <div class="flex gap-4 text-lg">
+                    <i class="fa-brands fa-cc-visa opacity-50"></i>
+                    <i class="fa-brands fa-cc-mastercard opacity-50"></i>
+                    <i class="fa-solid fa-money-bill-wave opacity-50" title="Cash on Delivery"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadSiteBranding();
+            await initApp();
+        });
+
+        document.addEventListener('productsLoaded', async () => {
+            // Get Product ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id') || 'p1'; // fallback to first product
+            
+            const product = products.find(p => p.id === productId);
+
+            if (!product) {
+                document.querySelector('main').innerHTML = '<div class="py-20 text-center"><h1 class="text-4xl font-bold mb-4">Product Not Found</h1><a href="shop.html" class="underline">Go back to shop</a></div>';
+                return;
+            }
+
+            // Populate Data
+            document.title = `${product.name} - LUXE FASHION`;
+            document.getElementById('bc-name').innerText = product.name;
+            document.getElementById('pd-category').innerText = product.category;
+            document.getElementById('pd-name').innerText = product.name;
+            document.getElementById('pd-price').innerText = `৳${product.price.toFixed(2)}`;
+            
+            if (product.originalPrice) {
+                const orig = document.getElementById('pd-original');
+                orig.innerText = `৳${product.originalPrice.toFixed(2)}`;
+                orig.classList.remove('hidden');
+            }
+
+            if (product.isSoldOut) {
+                const addBtn = document.getElementById('add-to-cart-btn');
+                addBtn.disabled = true;
+                addBtn.innerHTML = '<span>Sold Out</span><i class="fa-solid fa-ban"></i>';
+                addBtn.classList.replace('btn-primary', 'bg-red-600');
+                addBtn.classList.remove('hover:bg-[--primary-color]');
+                addBtn.classList.add('text-white', 'cursor-not-allowed', 'opacity-80');
+                
+                document.getElementById('qty-minus').disabled = true;
+                document.getElementById('qty-minus').classList.replace('hover:text-black', 'cursor-not-allowed');
+                document.getElementById('qty-plus').disabled = true;
+                document.getElementById('qty-plus').classList.replace('hover:text-black', 'cursor-not-allowed');
+            }
+
+            // Images Setup
+            const mainImg = document.getElementById('main-image');
+            
+            let thumbs = [];
+            // Use image1/image2 from JSON as base
+            if (product.image1) thumbs.push(product.image1);
+            if (product.image2 && product.image2 !== product.image1) thumbs.push(product.image2);
+            
+            // Fetch gallery images from DB
+            try {
+                const imgRes = await fetch(`api/product_images_api.php?action=list&product_id=${product.id}`);
+                const imgData = await imgRes.json();
+                if (imgData.success) {
+                    imgData.data.forEach(img => {
+                        if (!thumbs.includes(img.image_path)) thumbs.push(img.image_path);
+                    });
+                }
+            } catch(e) { console.warn("Gallery load failed"); }
+
+            if (thumbs.length === 0) thumbs.push('assets/placeholder.jpg');
+
+            mainImg.src = thumbs[0];
+            
+            document.getElementById('thumbnail-gallery').innerHTML = thumbs.map((img, idx) => `
+                <button class="thumb-btn border-2 ${idx===0 ? 'border-[--primary-color]' : 'border-transparent'} rounded-md overflow-hidden aspect-[3/4] opacity-80 hover:opacity-100 transition" onclick="setMainImage('${img}', this)">
+                    <img src="${img}" class="w-full h-full object-cover">
+                </button>
+            `).join('');
+
+            window.setMainImage = (src, btn) => {
+                mainImg.src = src;
+                document.querySelectorAll('.thumb-btn').forEach(b => {
+                    b.classList.remove('border-[--primary-color]');
+                    b.classList.add('border-transparent');
+                });
+                btn.classList.remove('border-transparent');
+                btn.classList.add('border-[--primary-color]');
+            };
+
+            // Recommended Products
+            const recommendedContainer = document.getElementById('recommended-products');
+            if (recommendedContainer) {
+                let recommendations = products.filter(p => p.id !== product.id);
+                // Sort by category match first
+                recommendations.sort((a, b) => {
+                    if (a.category === product.category && b.category !== product.category) return -1;
+                    if (a.category !== product.category && b.category === product.category) return 1;
+                    return 0;
+                });
+                
+                recommendations = recommendations.slice(0, 8); // more items for slider
+
+                recommendedContainer.innerHTML = recommendations.map(p => `
+                    <div class="slider-item group block cursor-pointer">
+                        <div class="relative bg-[#f5f5f5] aspect-[3/4] mb-4 overflow-hidden rounded-xl">
+                            ${p.isNew ? '<span class="absolute top-4 left-4 bg-black text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 z-10">New</span>' : ''}
+                            ${p.isFlashSale ? `<span class="absolute top-4 ${p.isNew ? 'left-16' : 'left-4'} bg-primary text-primary-contrast text-[10px] font-bold uppercase tracking-wider px-2 py-1 z-10">Sale</span>` : ''}
+                            ${p.isSoldOut ? `<span class="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 z-20 shadow">Sold Out</span>` : ''}
+                            <a href="product.html?id=${p.id}" class="block w-full h-full">
+                                <img src="${p.image1 || (p.images && p.images[0])}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            </a>
+                            ${!p.isSoldOut ? `
+                            <button onclick="addToCart('${p.id}', 1)" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white text-black text-xs font-bold uppercase tracking-widest py-3 px-6 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black hover:text-white translate-y-4 group-hover:translate-y-0 w-[90%] flex items-center justify-center gap-2 shadow-sm">
+                                <span>Add To Bag</span>
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>` : ''}
+                        </div>
+                        <h3 class="font-bold text-sm tracking-wide mb-1"><a href="product.html?id=${p.id}" class="hover:text-primary transition">${p.name}</a></h3>
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-primary text-sm">৳${p.price.toFixed(2)}</span>
+                            ${p.originalPrice ? `<span class="text-xs text-gray-400 line-through">৳${p.originalPrice.toFixed(2)}</span>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Image Zoom effect
+            const zoomContainer = document.getElementById('main-image-container');
+            zoomContainer.addEventListener('mousemove', (e) => {
+                const rect = zoomContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const xPercent = x / rect.width * 100;
+                const yPercent = y / rect.height * 100;
+                
+                mainImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+                mainImg.style.transform = "scale(1.5)";
+            });
+
+            zoomContainer.addEventListener('mouseleave', () => {
+                mainImg.style.transformOrigin = "center center";
+                mainImg.style.transform = "scale(1)";
+            });
+
+            // Selections State
+            let selectedColor = product.colors && product.colors.length > 0 ? product.colors[0] : null;
+            let selectedSize = null; // No default size, force selection
+            let quantity = 1;
+
+            // Render Colors
+            if (product.colors && product.colors.length > 0) {
+                document.getElementById('pd-colors').innerHTML = product.colors.map(color => `
+                    <button class="color-btn w-8 h-8 rounded-full border border-gray-300 relative focus:outline-none transition ${color === selectedColor ? 'ring-2 ring-offset-2 ring-black' : ''}" style="background-color: ${color};" data-color="${color}" onclick="selectColor('${color}', this)"></button>
+                `).join('');
+            } else {
+                document.getElementById('pd-colors').parentElement.style.display = 'none';
+            }
+
+            window.selectColor = (color, btn) => {
+                selectedColor = color;
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-2', 'ring-black'));
+                btn.classList.add('ring-2', 'ring-offset-2', 'ring-black');
+            };
+
+            // Render Sizes
+            const sizeWrapper = document.getElementById('pd-sizes').parentElement;
+            if (product.sizes && product.sizes.length > 0) {
+                document.getElementById('pd-sizes').innerHTML = product.sizes.map(size => `
+                    <button class="size-btn border border-gray-300 px-6 py-2 rounded-lg text-sm font-medium hover:border-black transition" data-size="${size}" onclick="selectSize('${size}', this)">${size}</button>
+                `).join('');
+                sizeWrapper.style.display = 'block';
+            } else {
+                sizeWrapper.style.display = 'none';
+                selectedSize = 'N/A'; // Automatically satisfy validation if no sizes
+            }
+
+            window.selectSize = (size, btn) => {
+                selectedSize = size;
+                document.querySelectorAll('.size-btn').forEach(b => {
+                    b.classList.remove('bg-black', 'text-white', 'border-black', 'ring-2', 'ring-black', 'ring-offset-2');
+                });
+                btn.classList.add('bg-black', 'text-white', 'border-black', 'ring-2', 'ring-black', 'ring-offset-2');
+                // Remove error state if any
+                document.getElementById('pd-sizes').classList.remove('ring-2', 'ring-red-500', 'ring-offset-4', 'rounded-lg');
+            };
+
+            // Quantity Module
+            const qtyVal = document.getElementById('qty-val');
+            document.getElementById('qty-minus').addEventListener('click', () => {
+                if (quantity > 1) {
+                    quantity--;
+                    qtyVal.innerText = quantity;
+                }
+            });
+            document.getElementById('qty-plus').addEventListener('click', () => {
+                if (quantity < 10) {
+                    quantity++;
+                    qtyVal.innerText = quantity;
+                }
+            });
+
+            // Add To Cart logic
+            document.getElementById('add-to-cart-btn').addEventListener('click', function() {
+                if (product.isSoldOut) return;
+                
+                if (!selectedSize) {
+                    // Show error state
+                    const sizeContainer = document.getElementById('pd-sizes');
+                    sizeContainer.classList.add('ring-2', 'ring-red-500', 'ring-offset-4', 'rounded-lg');
+                    sizeContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Add small shake animation
+                    sizeContainer.style.animation = 'none';
+                    sizeContainer.offsetHeight; /* trigger reflow */
+                    sizeContainer.style.animation = 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both';
+                    
+                    // Add inline style for shake if not in CSS
+                    if(!document.getElementById('shake-style')) {
+                        const style = document.createElement('style');
+                        style.id = 'shake-style';
+                        style.innerHTML = `@keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }`;
+                        document.head.appendChild(style);
+                    }
+                    return;
+                }
+                
+                // Button animation
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Adding...';
+                this.classList.add('bg-black');
+                
+                setTimeout(() => {
+                    addToCart(product.id, quantity, selectedSize, selectedColor);
+                    this.innerHTML = '<i class="fa-solid fa-check"></i> Added';
+                    this.classList.replace('bg-black', 'bg-green-600');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('bg-green-600', 'bg-black');
+                    }, 2000);
+                }, 500); // simulate tiny network delay feeling
+            });
+
+        });
+    </script>
+</body>
+</html>

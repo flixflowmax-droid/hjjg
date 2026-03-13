@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout - LUXE FASHION</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--primary-color)',
+                        'primary-hover': 'var(--primary-hover)',
+                        'primary-contrast': 'var(--primary-contrast)',
+                        secondary: 'var(--secondary-color)',
+                        accent: 'var(--accent-color)',
+                        background: 'var(--bg-color)',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="page-enter text-black font-sans">
+
+    <!-- Minimal Header for Checkout (reduces distraction) -->
+    <header class="py-6 bg-white border-b border-gray-100">
+        <div class="container mx-auto px-6 lg:px-12 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="home.html" class="flex items-center gap-2 text-xl font-black tracking-tighter">
+                <img src="assets/logo.png" alt="Logo" class="site-logo h-8 w-auto object-contain">
+                <span>LUXE FASHION</span>
+            </a>
+
+            <!-- Navigation Links (Desktop) -->
+            <nav class="hidden md:flex gap-8 text-xs font-semibold tracking-wide text-gray-800 uppercase">
+                <a href="shop.html?category=new" class="hover:text-primary transition">New Arrivals</a>
+                <div class="relative group cursor-pointer flex items-center gap-1">
+                    <span class="hover:text-primary transition">Collections</span>
+                    <i class="fa-solid fa-chevron-down text-[8px] text-gray-400"></i>
+                </div>
+                <a href="shop.html?category=women" class="hover:text-primary transition">Women</a>
+                <a href="shop.html?category=men" class="hover:text-primary transition">Men</a>
+                <a href="shop.html?category=sale" class="text-primary hover:text-primary-hover transition">Flash Sale</a>
+            </nav>
+
+            <!-- Search, User, Cart -->
+            <div class="flex items-center gap-6 relative">
+                <!-- Search Bar -->
+                <div class="hidden md:flex relative items-center">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" id="desk-search" placeholder="Search trends..." class="search-input pl-10 pr-4 py-2 rounded-full bg-black/5 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none text-xs transition-all w-56 text-black placeholder-gray-500">
+                    </div>
+                </div>
+
+                <!-- Mobile Search Icon -->
+                <button class="md:hidden hover:text-primary transition text-gray-800" onclick="toggleMobileSearch()" title="Search">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+                
+                <a href="#" class="cart-toggle relative hover:text-primary transition text-gray-800" title="Bag">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span class="cart-badge absolute -top-1.5 -right-2 bg-primary text-primary-contrast text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+                </a>
+                
+                <button class="hover:text-primary transition text-gray-800 ml-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Full-Screen Menu Overlay -->
+    <div id="mobile-menu" class="mobile-menu-overlay">
+        <button id="close-menu-btn" class="absolute top-6 right-8 text-gray-400 hover:text-black transition">
+            <i class="fa-solid fa-xmark text-4xl"></i>
+        </button>
+        <nav class="flex flex-col items-center">
+            <a href="home.html">Home</a>
+            <a href="shop.html?category=new">New Arrivals</a>
+            <a href="shop.html?category=collections">Collections</a>
+            <a href="shop.html?category=women">Women</a>
+            <a href="shop.html?category=men">Men</a>
+            <a href="shop.html?category=accessories">Accessories</a>
+            <a href="shop.html?category=sale" class="text-primary !text-primary hover:!text-primary-hover">Flash Sale</a>
+            <div class="h-px w-12 bg-gray-200 my-4"></div>
+            <a href="about.html" class="!text-xl !font-medium !text-gray-500 hover:!text-black">About The Brand</a>
+            <a href="contact.html" class="!text-xl !font-medium !text-gray-500 hover:!text-black">Contact Us</a>
+        </nav>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div id="mobile-search-bar" class="fixed w-full top-0 left-0 bg-white shadow-md z-[60] transform -translate-y-full transition-transform duration-300 py-4 px-6 flex items-center gap-4">
+        <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" id="mob-search" placeholder="Search trends..." class="search-input w-full pl-10 pr-4 py-2 rounded-full bg-black/5 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none text-sm text-black placeholder-gray-500">
+        </div>
+        <button onclick="toggleMobileSearch()" class="text-gray-400 hover:text-black">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+    </div>
+    <main class="container mx-auto px-6 lg:px-12 py-12 mb-20">
+        <div class="flex flex-col lg:flex-row gap-12 lg:gap-24 relative" id="checkout-container">
+            
+            <!-- Left Form Area -->
+            <div class="w-full lg:w-3/5">
+                
+                <h1 class="text-3xl font-black mb-8 tracking-tight">Delivery Details</h1>
+                
+                <form id="checkout-form" class="space-y-8">
+                    <!-- Guest vs User Header -->
+                    <div class="bg-gray-100 p-4 rounded-lg flex justify-between items-center text-sm font-medium text-gray-600 mb-8" id="auth-status-bar">
+                        <span>Checking out as Guest</span>
+                        <a href="login.html" class="text-[--primary-color] hover:underline flex items-center gap-1"><i class="fa-regular fa-user"></i> Log in for faster checkout</a>
+                    </div>
+
+                    <!-- Contact -->
+                    <div>
+                        <h2 class="text-lg font-bold mb-4 border-b pb-2"><i class="fa-regular fa-address-card text-gray-400 mr-2"></i> Contact Information</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">First Name</label>
+                                <input type="text" id="c-fname" required class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-[--primary-color] focus:ring-1 focus:ring-[--primary-color] transition bg-white" placeholder="First Name">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Last Name</label>
+                                <input type="text" id="c-lname" required class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-[--primary-color] focus:ring-1 focus:ring-[--primary-color] transition bg-white" placeholder="Last Name">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Phone Number</label>
+                                <input type="tel" id="c-phone" required class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-[--primary-color] focus:ring-1 focus:ring-[--primary-color] transition bg-white" placeholder="+880 1700-000000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div>
+                        <h2 class="text-lg font-bold mb-4 border-b pb-2 mt-8"><i class="fa-solid fa-location-dot text-gray-400 mr-2"></i> Shipping Address</h2>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Division</label>
+                                    <select id="c-division" required class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-[--primary-color] focus:ring-1 focus:ring-[--primary-color] transition bg-white appearance-none cursor-pointer">
+                                        <option value="">Select Division</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">District</label>
+                                    <select id="c-district" required disabled class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-[--primary-color] focus:ring-1 focus:ring-[--primary-color] transition bg-gray-100 appearance-none cursor-not-allowed">
+                                        <option value="">Select Division First</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">City / Village / Street</label>
+                                    <input type="text" id="c-address" required class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-[--primary-color] focus:ring-1 focus:ring-[--primary-color] transition bg-white" placeholder="Dhanmondi, Road 2">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Zip / Postal Code</label>
+                                    <input type="text" id="c-zip" required class="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:border-[--primary-color] focus:ring-1 focus:ring-[--primary-color] transition bg-white" placeholder="1209">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method (Strictly COD) -->
+                    <div>
+                        <h2 class="text-lg font-bold mb-4 border-b pb-2 mt-8"><i class="fa-solid fa-money-bill text-gray-400 mr-2"></i> Payment Method</h2>
+                        
+                        <div class="border-2 border-[--primary-color] bg-[--primary-color]/5 rounded-lg p-6 relative overflow-hidden">
+                            <div class="flex items-start gap-4">
+                                <i class="fa-solid fa-circle-check text-[--primary-color] text-xl mt-1"></i>
+                                <div>
+                                    <h4 class="font-bold text-lg mb-1">Cash on Delivery (COD)</h4>
+                                    <p class="text-sm text-gray-600 leading-relaxed">Pay with cash upon delivery. Enjoy a seamless experience without the need for credit cards.</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-truck-fast absolute -bottom-6 -right-6 text-9xl text-[--primary-color] opacity-5"></i>
+                        </div>
+                    </div>
+
+                    <div class="pt-8">
+                        <button type="submit" id="confirm-btn" class="btn-primary w-full py-5 rounded-lg font-bold text-xl tracking-wider uppercase group relative overflow-hidden shadow-lg shadow-pink-500/30">
+                            <span class="relative z-10 flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-lock text-sm"></i> Confirm Order via COD
+                            </span>
+                        </button>
+                        <p class="text-xs text-center text-gray-400 mt-4"><i class="fa-solid fa-shield-halved"></i> 256-bit SSL encrypted secure processing</p>
+                    </div>
+                </form>
+
+            </div>
+
+            <!-- Right Sidebar: Order Summary -->
+            <aside class="w-full lg:w-2/5">
+                <div class="sticky top-10 bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+                    <h2 class="text-2xl font-bold tracking-tight mb-6">Order Summary</h2>
+                    
+                    <!-- Items -->
+                    <div id="co-items" class="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- JS populated -->
+                    </div>
+
+                    <!-- Breakdown -->
+                    <div class="border-t border-b py-4 mb-6 space-y-3">
+                        <div class="flex justify-between items-center text-gray-500 text-sm">
+                            <span>Subtotal</span>
+                            <span id="co-subtotal" class="font-semibold text-black">৳0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center text-gray-500 text-sm">
+                            <span>Delivery Charge</span>
+                            <span id="co-delivery" class="font-semibold text-[--primary-color]">+ ৳10.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="flex justify-between items-center text-xl">
+                        <span class="font-bold">Total Payable</span>
+                        <span id="co-total" class="font-black text-3xl">৳0.00</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Success Animation Overlay -->
+        <div id="success-overlay" class="fixed inset-0 bg-white z-[100] hidden flex-col items-center justify-center text-center px-4">
+            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6 scale-0 animate-[scaleIn_0.5s_ease-out_forwards]">
+                <i class="fa-solid fa-check text-4xl text-green-500 scale-0 animate-[scaleIn_0.5s_0.3s_ease-out_forwards]"></i>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-black tracking-tighter mb-4 opacity-0 animate-[fadeIn_0.5s_0.6s_ease-out_forwards]">Order Confirmed!</h1>
+            <p class="text-lg text-gray-500 mb-8 opacity-0 animate-[fadeIn_0.5s_0.8s_ease-out_forwards]">Thank you for shopping with LUXE FASHION. Your order is being processed.</p>
+            
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 w-full max-w-md mx-auto mb-8 text-left opacity-0 animate-[fadeIn_0.5s_1s_ease-out_forwards]">
+                <p class="text-sm text-gray-500 uppercase tracking-widest font-semibold mb-1">Tracking ID</p>
+                <p class="text-2xl font-mono font-bold tracking-widest text-[#111]" id="track-id">#LX-00000</p>
+                <p class="text-sm mt-4 text-gray-500">Payment Mode: <strong>Cash on Delivery</strong></p>
+            </div>
+
+            <a href="shop.html" class="bg-black text-white px-8 py-3 rounded-full font-bold hover:bg-[--primary-color] transition opacity-0 animate-[fadeIn_0.5s_1.2s_ease-out_forwards]">Continue Shopping</a>
+        </div>
+
+    </main>
+
+        <!-- Global Footer -->
+    <footer class="bg-[--secondary-color] text-white pt-24 pb-12 mt-24">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
+                <!-- Branding -->
+                <div>
+                    <a href="home.html" class="flex items-center gap-2 text-2xl font-bold tracking-tighter mb-6">
+                        <img src="assets/logo.png" alt="Logo" class="site-logo h-6 w-auto object-contain">
+                        <span>LUXE FASHION</span>
+                    </a>
+                    <p data-text-key="footer_about" class="text-gray-400 text-sm mb-6 leading-relaxed">Redefining modern luxury through sustainable practices and timeless craftsmanship. Join our journey into the future of fashion.</p>
+                    <div class="flex gap-4">
+                        <a href="https://instagram.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://twitter.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="https://tiktok.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links 1 -->
+                <div>
+                    <h4 data-text-key="footer_col_1_title" class="font-bold mb-6 text-lg">Shop Collections</h4>
+                    <ul id="cms-footer-col-1" class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="shop.html?category=new" class="hover:text-[--primary-color] transition">Women's New Arrivals</a></li>
+                        <li><a href="shop.html?category=men" class="hover:text-[--primary-color] transition">Men's Essentials</a></li>
+                        <li><a href="shop.html?category=accessories" class="hover:text-[--primary-color] transition">Luxury Accessories</a></li>
+                        <li><a href="shop.html?category=collections" class="hover:text-[--primary-color] transition">Runway Collection</a></li>
+                        <li><a href="shop.html?sale=true" class="hover:text-[--primary-color] transition">Limited Edition Drops</a></li>
+                    </ul>
+                </div>
+
+                <!-- Links 2 -->
+                <div>
+                    <h4 data-text-key="footer_col_2_title" class="font-bold mb-6 text-lg">Customer Care</h4>
+                    <ul id="cms-footer-col-2" class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="contact.html" class="hover:text-[--primary-color] transition">Contact Us</a></li>
+                        <li><a href="faq.html" class="hover:text-[--primary-color] transition">FAQ</a></li>
+                        <li><a href="returns.html" class="hover:text-[--primary-color] transition">Returns &amp; Exchanges</a></li>
+                        <li><a href="about.html" class="hover:text-[--primary-color] transition">About Us</a></li>
+                        <li><a href="dashboard.html" class="hover:text-[--primary-color] transition">Order Tracking</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-[10px] text-gray-600 border-t border-white/10 pt-8 mt-8 mb-8 text-justify leading-relaxed">
+                <h1 data-text-key="footer_seo_title" class="font-bold text-gray-500 mb-2 text-xs">Premium Fashion Destination</h1>
+                <span data-text-key="footer_seo_text">Luxe Fashion is the leading premium fashion retailer, curating global top designers. We specialize in contemporary luxury, avant-garde pieces, structured blazers, high-performance tailoring, and artisanal leather accessories. Our platform offers an immersive shopping experience featuring the latest autumn/winter trends...</span>
+            </div>
+
+            <!-- Bottom -->
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p>&copy; 2024 LUXE Fashion Global Inc. All rights reserved.</p>
+                <div id="cms-footer-bottom-links" class="flex gap-6">
+                    <a href="home.html" class="hover:text-white transition">Homepage</a>
+                    <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="terms.html" class="hover:text-white transition">Terms &amp; Conditions</a>
+                </div>
+                <div class="flex gap-4 text-lg">
+                    <i class="fa-brands fa-cc-visa opacity-50"></i>
+                    <i class="fa-brands fa-cc-mastercard opacity-50"></i>
+                    <i class="fa-solid fa-money-bill-wave opacity-50" title="Cash on Delivery"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 10px; }
+        @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+    </style>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('productsLoaded', () => {
+            const coItemsContainer = document.getElementById('co-items');
+            const coSubtotalEl = document.getElementById('co-subtotal');
+            const coDeliveryEl = document.getElementById('co-delivery');
+            const coTotalEl = document.getElementById('co-total');
+            const divisionSelect = document.getElementById('c-division');
+            const districtSelect = document.getElementById('c-district');
+            
+            // BD Geo Data
+            const bdData = {
+                "Dhaka": ["Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail"],
+                "Chittagong": ["Bandarban", "Brahmanbaria", "Chandpur", "Chattogram", "Cumilla", "Cox's Bazar", "Feni", "Khagrachari", "Lakshmipur", "Noakhali", "Rangamati"],
+                "Rajshahi": ["Bogura", "Joypurhat", "Naogaon", "Natore", "Chapainawabganj", "Pabna", "Rajshahi", "Sirajganj"],
+                "Khulna": ["Bagerhat", "Chuadanga", "Jashore", "Jhenaidah", "Khulna", "Kushtia", "Magura", "Meherpur", "Narail", "Satkhira"],
+                "Barishal": ["Barguna", "Barishal", "Bhola", "Jhalokati", "Patuakhali", "Pirojpur"],
+                "Sylhet": ["Habiganj", "Moulvibazar", "Sunamganj", "Sylhet"],
+                "Rangpur": ["Dinajpur", "Gaibandha", "Kurigram", "Lalmonirhat", "Nilphamari", "Panchagarh", "Rangpur", "Thakurgaon"],
+                "Mymensingh": ["Jamalpur", "Mymensingh", "Netrokona", "Sherpur"]
+            };
+
+            // Populate Divisions
+            Object.keys(bdData).forEach(div => {
+                const opt = document.createElement('option');
+                opt.value = div;
+                opt.innerText = div;
+                divisionSelect.appendChild(opt);
+            });
+
+            // Handle Division Change
+            divisionSelect.addEventListener('change', function() {
+                const div = this.value;
+                if (!div) {
+                    districtSelect.innerHTML = '<option value="">Select Division First</option>';
+                    districtSelect.disabled = true;
+                    districtSelect.classList.add('bg-gray-100', 'cursor-not-allowed');
+                    districtSelect.classList.remove('bg-white', 'cursor-pointer');
+                    updateTotals();
+                } else {
+                    districtSelect.innerHTML = '<option value="">Select District</option>';
+                    bdData[div].forEach(dist => {
+                        const opt = document.createElement('option');
+                        opt.value = dist;
+                        opt.innerText = dist;
+                        districtSelect.appendChild(opt);
+                    });
+                    districtSelect.disabled = false;
+                    districtSelect.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                    districtSelect.classList.add('bg-white', 'cursor-pointer');
+                    updateTotals(); // recalculate delivery if needed
+                }
+            });
+
+            // Check auth & Auto-fill Address
+            async function checkAuthAndPopulate() {
+                const res = await fetch('api/auth.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'check_session' })
+                });
+                const authData = await res.json();
+                
+                if (authData.success) {
+                    const user = authData.user;
+                    document.getElementById('auth-status-bar').innerHTML = `
+                        <span class="text-[--primary-color]"><i class="fa-solid fa-circle-check"></i> Logged in as ${user.name}</span>
+                        <a href="dashboard.html" class="text-gray-500 hover:text-black underline text-xs">View Dashboard</a>
+                    `;
+                    
+                    const nameParts = user.name.split(' ');
+                    document.getElementById('c-fname').value = nameParts[0] || '';
+                    document.getElementById('c-lname').value = nameParts.slice(1).join(' ') || '';
+                    
+                    // Fetch full profile for address
+                    const profRes = await fetch('api/profile_api.php?action=get_profile');
+                    const profData = await profRes.json();
+                    if (profData.success) {
+                        const u = profData.user;
+                        document.getElementById('c-phone').value = u.phone || '';
+                        if (u.address_division) {
+                            divisionSelect.value = u.address_division;
+                            divisionSelect.dispatchEvent(new Event('change'));
+                            if (u.address_district) {
+                                districtSelect.value = u.address_district;
+                                districtSelect.dispatchEvent(new Event('change'));
+                            }
+                        }
+                        if (u.address_city) document.getElementById('c-address').value = u.address_city;
+                        if (u.address_zip) document.getElementById('c-zip').value = u.address_zip;
+                    }
+                }
+            }
+            checkAuthAndPopulate();
+
+            let subtotal = 0;
+            let deliveryCharge = 100; // default BD shipping
+
+            function renderCheckout() {
+                if (cart.length === 0) {
+                    window.location.href = 'shop.html';
+                    return;
+                }
+
+                subtotal = 0;
+                coItemsContainer.innerHTML = cart.map((item, index) => {
+                    const price = item.price * item.quantity;
+                    subtotal += price;
+                    
+                    // Look up product to find available sizes if products loaded
+                    const prod = (typeof products !== 'undefined') ? products.find(p => p.id === item.id) : null;
+                    let sizeHtml = `<p class="text-xs text-gray-500 mt-1">Size: ${item.size || 'N/A'}</p>`;
+                    
+                    if (prod && prod.sizes && prod.sizes.length > 0) {
+                        sizeHtml = `<div class="mt-1 flex items-center gap-2">
+                                        <label class="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Size:</label>
+                                        <select class="border border-gray-300 rounded text-xs px-2 py-0.5 outline-none focus:border-[--primary-color] bg-white cursor-pointer hover:border-gray-400 transition" onchange="window.updateCartItemSize(${index}, this.value)">
+                                            ${prod.sizes.map(s => `<option value="${s}" ${s === item.size ? 'selected' : ''}>${s}</option>`).join('')}
+                                        </select>
+                                    </div>`;
+                    }
+
+                    return `
+                        <div class="flex gap-4 items-center animate-[fadeIn_0.3s_ease] border-b border-gray-100 pb-3 mb-3 last:mb-0 last:pb-0 last:border-0">
+                            <div class="relative w-16 h-20 bg-gray-100 rounded-md overflow-hidden shrink-0">
+                                <img src="${item.image1}" class="w-full h-full object-cover">
+                                <span class="absolute top-0 right-0 bg-gray-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-bl-md shadow-sm font-bold">${item.quantity}</span>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="text-sm font-semibold truncate pr-4 text-gray-800">${item.name}</h5>
+                                ${sizeHtml}
+                            </div>
+                            <span class="font-bold text-sm text-[--primary-color]">৳${price.toFixed(2)}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                window.updateCartItemSize = (index, newSize) => {
+                    if (cart[index]) {
+                        cart[index].size = newSize;
+                        localStorage.setItem('luxury_cart', JSON.stringify(cart));
+                        // No need to re-render the whole checkout, the select already shows the new value
+                        // Optional: update header cart UI if it was visible
+                        if (typeof updateCartUI === 'function') updateCartUI();
+                    }
+                };
+
+                updateTotals();
+            }
+
+            function updateTotals() {
+                const isDhaka = divisionSelect.value === 'Dhaka' && districtSelect.value === 'Dhaka';
+                deliveryCharge = isDhaka ? 60 : 120; // 60 inside dhaka city, 120 outside
+                const total = subtotal + deliveryCharge;
+
+                coSubtotalEl.innerText = `৳${subtotal.toFixed(2)}`;
+                coDeliveryEl.innerText = `+ ৳${deliveryCharge.toFixed(2)}`;
+                coTotalEl.innerText = `৳${total.toFixed(2)}`;
+            }
+
+            districtSelect.addEventListener('change', updateTotals);
+
+            // Form Submit Logic
+            document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const btn = document.getElementById('confirm-btn');
+                btn.innerHTML = 'Processing...';
+                btn.disabled = true;
+
+                const trackingId = 'LX-' + Math.floor(100000 + Math.random() * 900000);
+                const fname = document.getElementById('c-fname').value;
+                const lname = document.getElementById('c-lname').value;
+                const phone = document.getElementById('c-phone').value;
+                const division = divisionSelect.value;
+                const district = districtSelect.value;
+                const city = document.getElementById('c-address').value;
+                const zip = document.getElementById('c-zip').value;
+                
+                const total = subtotal + deliveryCharge;
+
+                const orderData = {
+                    id: trackingId,
+                    customer: {
+                        name: fname + ' ' + lname,
+                        phone: phone,
+                        division: division,
+                        district: district,
+                        city: city,
+                        zip: zip
+                    },
+                    items: cart,
+                    subtotal: subtotal,
+                    deliveryCharge: deliveryCharge,
+                    total: total
+                };
+
+                try {
+                    const res = await fetch('api/checkout_api.php', {
+                        method: 'POST',
+                        body: JSON.stringify(orderData),
+                        headers: {'Content-Type': 'application/json'}
+                    });
+                    const d = await res.json();
+                    
+                    if (d.success) {
+                        // Order placed successfully
+                        document.getElementById('track-id').innerText = d.data?.order_id || trackingId;
+
+                        // Save to Order History in localStorage
+                        let history = JSON.parse(localStorage.getItem('luxury_history')) || [];
+                        history.push({...orderData, status: 'Processing', date: new Date().toLocaleDateString()});
+                        localStorage.setItem('luxury_history', JSON.stringify(history));
+
+                        // Clear Cart
+                        cart = [];
+                        localStorage.setItem('luxury_cart', JSON.stringify(cart));
+
+                        // Show Success Screen Full Animation
+                        const successOverlay = document.getElementById('success-overlay');
+                        successOverlay.classList.remove('hidden');
+                        successOverlay.classList.add('flex');
+                    } else {
+                        LuxeUI.alert(d.message || "Checkout failed", "Order Error", "fa-circle-exclamation", "#ef4444");
+                        btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-3"><i class="fa-solid fa-lock text-sm"></i> Confirm Order via COD</span>`;
+                        btn.disabled = false;
+                    }
+                } catch (e) {
+                    console.error("Checkout Error", e);
+                    LuxeUI.alert("A network error occurred. Please check your connection.", "Connection Error", "fa-wifi", "#ef4444");
+                    btn.innerHTML = `<span class="relative z-10 flex items-center justify-center gap-3"><i class="fa-solid fa-lock text-sm"></i> Confirm Order via COD</span>`;
+                    btn.disabled = false;
+                }
+            });
+
+            // Init
+            renderCheckout();
+        });
+    </script>
+</body>
+</html>

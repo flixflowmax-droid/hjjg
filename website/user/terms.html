@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions - LUXE FASHION</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'var(--primary-color)',
+                        'primary-hover': 'var(--primary-hover)',
+                        'primary-contrast': 'var(--primary-contrast)',
+                        secondary: 'var(--secondary-color)',
+                        accent: 'var(--accent-color)',
+                        background: 'var(--bg-color)',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="page-enter flex flex-col min-h-screen">
+    <header class="py-4 bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 lg:px-12 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="home.html" class="flex items-center gap-2 text-xl font-black tracking-tighter">
+                <img src="assets/logo.png" alt="Logo" class="site-logo h-8 w-auto object-contain">
+                <span>LUXE FASHION</span>
+            </a>
+
+            <!-- Navigation Links (Desktop) -->
+            <nav class="hidden md:flex gap-8 text-xs font-semibold tracking-wide text-gray-800 uppercase">
+                <a href="shop.html?category=new" class="hover:text-primary transition">New Arrivals</a>
+                <div class="relative group cursor-pointer flex items-center gap-1">
+                    <span class="hover:text-primary transition">Collections</span>
+                    <i class="fa-solid fa-chevron-down text-[8px] text-gray-400"></i>
+                </div>
+                <a href="shop.html?category=women" class="hover:text-primary transition">Women</a>
+                <a href="shop.html?category=men" class="hover:text-primary transition">Men</a>
+                <a href="shop.html?category=sale" class="text-primary hover:text-primary-hover transition">Flash Sale</a>
+            </nav>
+
+            <!-- Search, User, Cart -->
+            <div class="flex items-center gap-6 relative">
+                <!-- Search Bar -->
+                <div class="hidden md:flex relative items-center">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" id="desk-search" placeholder="Search trends..." class="search-input pl-10 pr-4 py-2 rounded-full bg-black/5 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none text-xs transition-all w-56 text-black placeholder-gray-500">
+                    </div>
+                </div>
+
+                <!-- Mobile Search Icon -->
+                <button class="md:hidden hover:text-primary transition text-gray-800" onclick="toggleMobileSearch()" title="Search">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+                
+                <a href="#" class="cart-toggle relative hover:text-primary transition text-gray-800" title="Bag">
+                    <i class="fa-solid fa-bag-shopping text-lg"></i>
+                    <span class="cart-badge absolute -top-1.5 -right-2 bg-primary text-primary-contrast text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+                </a>
+                
+                <button class="hover:text-primary transition text-gray-800 ml-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Full-Screen Menu Overlay -->
+    <div id="mobile-menu" class="mobile-menu-overlay">
+        <button id="close-menu-btn" class="absolute top-6 right-8 text-gray-400 hover:text-black transition">
+            <i class="fa-solid fa-xmark text-4xl"></i>
+        </button>
+        <nav class="flex flex-col items-center">
+            <a href="home.html">Home</a>
+            <a href="shop.html?category=new">New Arrivals</a>
+            <a href="shop.html?category=collections">Collections</a>
+            <a href="shop.html?category=women">Women</a>
+            <a href="shop.html?category=men">Men</a>
+            <a href="shop.html?category=accessories">Accessories</a>
+            <a href="shop.html?category=sale" class="text-primary !text-primary hover:!text-primary-hover">Flash Sale</a>
+            <div class="h-px w-12 bg-gray-200 my-4"></div>
+            <a href="about.html" class="!text-xl !font-medium !text-gray-500 hover:!text-black">About The Brand</a>
+            <a href="contact.html" class="!text-xl !font-medium !text-gray-500 hover:!text-black">Contact Us</a>
+        </nav>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div id="mobile-search-bar" class="fixed w-full top-0 left-0 bg-white shadow-md z-[60] transform -translate-y-full transition-transform duration-300 py-4 px-6 flex items-center gap-4">
+        <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" id="mob-search" placeholder="Search trends..." class="search-input w-full pl-10 pr-4 py-2 rounded-full bg-black/5 border border-transparent focus:bg-white focus:border-gray-200 focus:outline-none text-sm text-black placeholder-gray-500">
+        </div>
+        <button onclick="toggleMobileSearch()" class="text-gray-400 hover:text-black">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+    <div id="cart-drawer" class="cart-drawer px-6 py-6 font-sans border-l">
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold tracking-tight">Your Bag</h2>
+            <button id="close-cart" class="text-gray-400 hover:text-black transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto pr-2 space-y-4"></div>
+        <div class="mt-6 border-t pt-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-gray-500">Subtotal</span>
+                <span id="cart-subtotal" class="text-xl font-bold">৳0.00</span>
+            </div>
+            <a href="checkout.html" class="btn-primary w-full block text-center py-4 rounded-md font-semibold text-lg tracking-wide">Proceed to Checkout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-6 lg:px-12 py-16">
+        <div class="max-w-4xl mx-auto prose prose-neutral"><h1 class="text-5xl font-black mb-8">Terms and Conditions</h1><p class="text-gray-500 mb-8">Last Updated: March 2024</p><h2 class="text-2xl font-bold mt-8 mb-4">1. Acceptance of Terms</h2><p class="mb-4">By accessing and using LUXE FASHION, you accept and agree to be bound by the terms and provision of this agreement.</p><h2 class="text-2xl font-bold mt-8 mb-4">2. Provision of Services</h2><p class="mb-4">We reserve the right to modify or discontinue the Service with or without notice to the user. We shall not be liable to you or any third party should we exercise our right to modify or discontinue the Service.</p><h2 class="text-2xl font-bold mt-8 mb-4">3. User Conduct</h2><p class="mb-4">You agree to use our website and services in a manner that complies with all applicable laws and regulations.</p></div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-[--secondary-color] text-white pt-24 pb-12 mt-24">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
+                <!-- Branding -->
+                <div>
+                    <a href="home.html" class="flex items-center gap-2 text-2xl font-bold tracking-tighter mb-6">
+                        <img src="assets/logo.png" alt="Logo" class="site-logo h-6 w-auto object-contain">
+                        <span>LUXE FASHION</span>
+                    </a>
+                    <p data-text-key="footer_about" class="text-gray-400 text-sm mb-6 leading-relaxed">Redefining modern luxury through sustainable practices and timeless craftsmanship. Join our journey into the future of fashion.</p>
+                    <div class="flex gap-4">
+                        <a href="https://instagram.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://twitter.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="https://tiktok.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[--primary-color] hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links 1 -->
+                <div>
+                    <h4 data-text-key="footer_col_1_title" class="font-bold mb-6 text-lg">Shop Collections</h4>
+                    <ul id="cms-footer-col-1" class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="shop.html?category=new" class="hover:text-[--primary-color] transition">Women's New Arrivals</a></li>
+                        <li><a href="shop.html?category=men" class="hover:text-[--primary-color] transition">Men's Essentials</a></li>
+                        <li><a href="shop.html?category=accessories" class="hover:text-[--primary-color] transition">Luxury Accessories</a></li>
+                        <li><a href="shop.html?category=collections" class="hover:text-[--primary-color] transition">Runway Collection</a></li>
+                        <li><a href="shop.html?sale=true" class="hover:text-[--primary-color] transition">Limited Edition Drops</a></li>
+                    </ul>
+                </div>
+
+                <!-- Links 2 -->
+                <div>
+                    <h4 data-text-key="footer_col_2_title" class="font-bold mb-6 text-lg">Customer Care</h4>
+                    <ul id="cms-footer-col-2" class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="contact.html" class="hover:text-[--primary-color] transition">Contact Us</a></li>
+                        <li><a href="faq.html" class="hover:text-[--primary-color] transition">FAQ</a></li>
+                        <li><a href="returns.html" class="hover:text-[--primary-color] transition">Returns &amp; Exchanges</a></li>
+                        <li><a href="about.html" class="hover:text-[--primary-color] transition">About Us</a></li>
+                        <li><a href="dashboard.html" class="hover:text-[--primary-color] transition">Order Tracking</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-[10px] text-gray-600 border-t border-white/10 pt-8 mt-8 mb-8 text-justify leading-relaxed">
+                <h1 data-text-key="footer_seo_title" class="font-bold text-gray-500 mb-2 text-xs">Premium Fashion Destination</h1>
+                <span data-text-key="footer_seo_text">Luxe Fashion is the leading premium fashion retailer, curating global top designers. We specialize in contemporary luxury, avant-garde pieces, structured blazers, high-performance tailoring, and artisanal leather accessories. Our platform offers an immersive shopping experience featuring the latest autumn/winter trends...</span>
+            </div>
+
+            <!-- Bottom -->
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p>&copy; 2024 LUXE Fashion Global Inc. All rights reserved.</p>
+                <div id="cms-footer-bottom-links" class="flex gap-6">
+                    <a href="home.html" class="hover:text-white transition">Homepage</a>
+                    <a href="privacy.html" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="terms.html" class="hover:text-white transition">Terms &amp; Conditions</a>
+                </div>
+                <div class="flex gap-4 text-lg">
+                    <i class="fa-brands fa-cc-visa opacity-50"></i>
+                    <i class="fa-brands fa-cc-mastercard opacity-50"></i>
+                    <i class="fa-solid fa-money-bill-wave opacity-50" title="Cash on Delivery"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
